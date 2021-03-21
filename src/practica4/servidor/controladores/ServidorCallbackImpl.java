@@ -1,4 +1,4 @@
-package practica4.servidor;
+package practica4.servidor.controladores;
 
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
@@ -9,18 +9,24 @@ import java.util.*;
 
 public class ServidorCallbackImpl extends UnicastRemoteObject implements ServidorCallback {
 
+    private BDControlador bdControlador;
     private HashMap<UUID, IUsuario> listaClientes;
     public ServidorCallbackImpl() throws RemoteException{
         super();
         listaClientes=new HashMap<UUID,IUsuario>();
+        bdControlador=new BDControlador();
     }
 
 
     @Override
-    public void registrarCliente(IUsuario novoCliente) throws RemoteException{
+    public boolean registrarCliente(IUsuario novoCliente) throws RemoteException{
+        if(listaClientes.containsKey(novoCliente.getUuid()))
+            return false;
+
         System.out.println("Conectado novo cliente " + novoCliente.getUuid());
         listaClientes.put(novoCliente.getUuid(),novoCliente);
         notificarClientesConexion(novoCliente);
+        return true;
     }
 
     @Override
@@ -37,6 +43,16 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
+    public boolean comprobarUsuario(String nomeUsuario, String contrasinal) throws RemoteException {
+        return bdControlador.comprobarUsuario(nomeUsuario,contrasinal);
+    }
+
+    @Override
+    public IUsuario getUsuario(String nomeUsuario) throws RemoteException {
+        return bdControlador.getUsuario(nomeUsuario);
+    }
+
+    @Override
     public List<UUID> getListaClientes() throws RemoteException{
         return new ArrayList<>(listaClientes.keySet());
     }
@@ -45,7 +61,6 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     public IUsuario getCliente(UUID uuid) throws RemoteException {
         return listaClientes.get(uuid);
     }
-
 
 
 

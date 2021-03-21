@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface ServidorCallback extends Remote{
 
-    void registrarCliente(IUsuario obj) throws RemoteException;
+    boolean registrarCliente(IUsuario obj) throws RemoteException;
 
     List<UUID> getListaClientes() throws RemoteException;
 
@@ -16,5 +16,9 @@ public interface ServidorCallback extends Remote{
     void desRegistrarCliente(IUsuario obj) throws RemoteException;
 
     String getNomeUsuario(UUID uuid) throws RemoteException;
+
+    boolean comprobarUsuario(String nomeUsuario,String contrasinal)  throws RemoteException;
+
+    IUsuario getUsuario(String nomeUsuario)  throws RemoteException;
 
 }

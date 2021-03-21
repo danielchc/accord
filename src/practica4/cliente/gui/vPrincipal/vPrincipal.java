@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.interfaces.EventosCliente;
 import practica4.cliente.obxectos.Mensaxe;
-import practica4.cliente.obxectos.Usuario;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -22,7 +21,7 @@ public class vPrincipal implements Initializable {
 
     private final List<UUID> clientes;
     private final ServidorCallback servidorCallback;
-    private final Usuario usuario;
+    private final IUsuario usuario;
 
 
     @FXML
@@ -30,7 +29,7 @@ public class vPrincipal implements Initializable {
     @FXML
     private ListView listaClientes;
 
-    public vPrincipal(ServidorCallback servidorCallback, Usuario usuario) throws RemoteException {
+    public vPrincipal(ServidorCallback servidorCallback, IUsuario usuario) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.clientes=servidorCallback.getListaClientes();
         this.usuario=usuario;
@@ -83,7 +82,10 @@ public class vPrincipal implements Initializable {
 
         try {
             usuario.setRegistrado(true);
-            servidorCallback.registrarCliente(usuario);
+            if(!servidorCallback.registrarCliente(usuario)){
+                System.out.println("Xa hai unha instacia de este usuario");
+                System.exit(1);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }

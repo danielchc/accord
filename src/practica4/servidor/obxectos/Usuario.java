@@ -1,6 +1,5 @@
-package practica4.cliente.obxectos;
+package practica4.servidor.obxectos;
 
-import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 
@@ -13,9 +12,10 @@ public class Usuario implements IUsuario {
     private String nomeUsuario;
     private boolean registrado;
 
-    public Usuario() throws RemoteException {
+    public Usuario(UUID uuid, String nomeUsuario) throws RemoteException {
         this.registrado =false;
-        this.clienteCallback=new ClienteCallbackImpl();
+        this.uuid=uuid;
+        this.nomeUsuario=nomeUsuario;
     }
 
 

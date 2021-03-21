@@ -1,14 +1,10 @@
 package practica4.servidor;
 
+import practica4.servidor.controladores.ServidorCallbackImpl;
+
 import java.rmi.*;
-import java.rmi.server.*;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.net.*;
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 
 public class Servidor{
@@ -16,45 +12,6 @@ public class Servidor{
     public static void main(String args[]) {
         int portNum=19000;
         String registryURL;
-        Connection conn = null;
-        try {
-            // db parameters
-            String url = "jdbc:sqlite:practica4.db";
-            // create a connection to the database
-            conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         registryURL = String.format("rmi://0.0.0.0:%d/servidor",portNum);
 
         

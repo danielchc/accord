@@ -7,20 +7,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.gui.vPrincipal.vPrincipal;
-import practica4.cliente.obxectos.Usuario;
+import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.util.Random;
 import java.util.UUID;
 
 public class ClienteGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         ServidorCallback servidorCallback = (ServidorCallback) Naming.lookup(String.format("rmi://localhost:19000/servidor"));
-        Usuario usuario=new Usuario();
+        IUsuario usuario;
 
         Stage stage=new Stage();
         stage.setTitle("Práctica 1");
@@ -29,14 +29,20 @@ public class ClienteGUI extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader();
 
-        Random r= new Random(System.currentTimeMillis());
-        String nombres[]=new String[]{"Mono","Chimapancé","Bonobo","Mandril","Macaco"};
-        String colores[]=new String[]{"Verde","Azul","Amarelo","Vermello","Negro"};
 
-        String username= String.format("%s %s",nombres[Math.floorMod(r.nextInt(),nombres.length)],colores[Math.floorMod(r.nextInt(),colores.length)]);
 
-        usuario.setUuid(UUID.randomUUID());
-        usuario.setNomeUsuario(username);
+        String u="dani";
+        String p="abc123..";
+
+
+        if(servidorCallback.comprobarUsuario(u,p)){
+            usuario=servidorCallback.getUsuario(u);
+            usuario.setClienteCallback(new ClienteCallbackImpl());
+            System.out.println(usuario.getUuid());
+        }else{
+            System.out.println("Contraseña podre");
+            return;
+        }
 
 
         fxmlLoader.setController(new vPrincipal(servidorCallback,usuario));
