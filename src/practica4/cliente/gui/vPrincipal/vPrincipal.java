@@ -8,7 +8,8 @@ import javafx.scene.control.TextField;
 import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.interfaces.EventosCliente;
 import practica4.cliente.obxectos.Mensaxe;
-import practica4.interfaces.ClienteCallback;
+import practica4.cliente.obxectos.Usuario;
+import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 import java.net.URL;
@@ -21,7 +22,7 @@ public class vPrincipal implements Initializable {
 
     private final List<UUID> clientes;
     private final ServidorCallback servidorCallback;
-    private final ClienteCallbackImpl clienteCallback;
+    private final Usuario usuario;
 
 
     @FXML
@@ -29,16 +30,27 @@ public class vPrincipal implements Initializable {
     @FXML
     private ListView listaClientes;
 
-    public vPrincipal(ServidorCallback servidorCallback, ClienteCallbackImpl clienteCallback) throws RemoteException {
+    public vPrincipal(ServidorCallback servidorCallback, Usuario usuario) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.clientes=servidorCallback.getListaClientes();
-        this.clienteCallback=clienteCallback;
+        this.usuario=usuario;
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        listaClientes.getItems().addAll(clientes);
+        ClienteCallbackImpl clienteCallback= (ClienteCallbackImpl) usuario.getClienteCallback();
+
+        for(UUID cUUID:clientes){
+            Platform.runLater(()->{
+                try{
+                    listaClientes.getItems().add(servidorCallback.getNomeUsuario(cUUID));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
         clienteCallback.setEventos(
                 new EventosCliente(){
                     @Override
@@ -49,8 +61,13 @@ public class vPrincipal implements Initializable {
                     @Override
                     public void onUsuarioConectado(UUID uuid) {
                         clientes.add(uuid);
+
                         Platform.runLater(()->{
-                            listaClientes.getItems().add(uuid);
+                            try{
+                                listaClientes.getItems().add(servidorCallback.getNomeUsuario(uuid));
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
                         });
                     }
 
@@ -65,7 +82,8 @@ public class vPrincipal implements Initializable {
         );
 
         try {
-            servidorCallback.registrarCliente(clienteCallback);
+            usuario.setRegistrado(true);
+            servidorCallback.registrarCliente(usuario);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -77,8 +95,8 @@ public class vPrincipal implements Initializable {
         UUID uuid= (UUID) listaClientes.getSelectionModel().getSelectedItems().get(0);
 
         try {
-            ClienteCallback k=servidorCallback.getCliente(uuid);
-            k.enviarMensaxe(new Mensaxe(clienteCallback.getUUID(),uuid,mensaxeEnviar.getText()));
+            IUsuario k=servidorCallback.getCliente(uuid);
+            k.getClienteCallback().enviarMensaxe(new Mensaxe(usuario.getUuid(),uuid,mensaxeEnviar.getText()));
 
         } catch (RemoteException e) {
             e.printStackTrace();

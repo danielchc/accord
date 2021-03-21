@@ -11,19 +11,10 @@ import java.util.UUID;
 
 public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteCallback{
 
-
-   private final UUID uuid;
-
    private EventosCliente eventos;
    public ClienteCallbackImpl() throws RemoteException {
       super();
-      this.uuid=UUID.randomUUID();
 
-   }
-
-   @Override
-   public UUID getUUID() throws RemoteException {
-      return uuid;
    }
 
    public void enviarMensaxe(Mensaxe mensaxe){
