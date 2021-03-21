@@ -1,7 +1,6 @@
 package practica4.cliente.controladores;
 
 import practica4.cliente.interfaces.EventosCliente;
-import practica4.cliente.obxectos.IMensaxe;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
 
@@ -27,7 +26,7 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
       return uuid;
    }
 
-   public void enviarMensaxe(IMensaxe mensaxe){
+   public void enviarMensaxe(Mensaxe mensaxe){
       eventos.onMensaxeRecibido(mensaxe);
    }          
 

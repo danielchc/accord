@@ -7,7 +7,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.interfaces.EventosCliente;
-import practica4.cliente.obxectos.IMensaxe;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.ServidorCallback;
@@ -43,7 +42,7 @@ public class vPrincipal implements Initializable {
         clienteCallback.setEventos(
                 new EventosCliente(){
                     @Override
-                    public void onMensaxeRecibido(IMensaxe mensaxe) {
+                    public void onMensaxeRecibido(Mensaxe mensaxe) {
                         System.out.println(mensaxe);
                     }
 
