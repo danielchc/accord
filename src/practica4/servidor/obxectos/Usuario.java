@@ -7,26 +7,15 @@ import java.rmi.RemoteException;
 import java.util.UUID;
 
 public class Usuario implements IUsuario {
-    private ClienteCallback clienteCallback;
     private UUID uuid;
     private String nomeUsuario;
     private boolean registrado;
+    private ClienteCallback clienteCallback;
 
     public Usuario(UUID uuid, String nomeUsuario) throws RemoteException {
-        this.registrado =false;
+        this.registrado=false;
         this.uuid=uuid;
         this.nomeUsuario=nomeUsuario;
-    }
-
-
-    @Override
-    public ClienteCallback getClienteCallback() {
-        return clienteCallback;
-    }
-
-    @Override
-    public void setClienteCallback(ClienteCallback clienteCallback) {
-        this.clienteCallback = clienteCallback;
     }
 
     @Override
@@ -57,5 +46,18 @@ public class Usuario implements IUsuario {
     @Override
     public void setRegistrado(boolean registrado) {
         this.registrado = registrado;
+    }
+
+    public ClienteCallback getClienteCallback() {
+        return clienteCallback;
+    }
+
+    public void setClienteCallback(ClienteCallback clienteCallback) {
+        this.clienteCallback = clienteCallback;
+    }
+
+    @Override
+    public String toString() {
+        return getNomeUsuario();
     }
 }

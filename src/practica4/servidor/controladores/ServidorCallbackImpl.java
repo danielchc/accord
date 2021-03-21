@@ -53,8 +53,8 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public List<UUID> getListaClientes() throws RemoteException{
-        return new ArrayList<>(listaClientes.keySet());
+    public List<IUsuario> getListaClientes() throws RemoteException{
+        return new ArrayList<IUsuario>(listaClientes.values());
     }
 
     @Override
@@ -66,13 +66,13 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
     private synchronized void notificarClientesConexion(IUsuario novoCliente) throws RemoteException{
         for(IUsuario cb:listaClientes.values()){
-            cb.getClienteCallback().rexistrarClienteDisponible(novoCliente.getUuid());
+            cb.getClienteCallback().rexistrarClienteDisponible(novoCliente);
         }
     }
 
     private synchronized void notificarClientesDesconexion(IUsuario velloCliente) throws RemoteException{
         for(IUsuario cb:listaClientes.values()){
-            cb.getClienteCallback().eliminarClienteDisponible(velloCliente.getUuid());
+            cb.getClienteCallback().eliminarClienteDisponible(velloCliente);
         }
     }
 

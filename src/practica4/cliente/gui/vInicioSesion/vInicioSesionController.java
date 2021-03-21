@@ -12,11 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.gui.vPrincipal.vPrincipal;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
-import practica4.servidor.obxectos.Usuario;
 
 import java.io.IOException;
 import java.net.URL;
@@ -64,7 +62,6 @@ public class vInicioSesionController implements Initializable {
 
     private void iniciarSesion(String  u) throws IOException {
         usuario = servidorCallback.getUsuario(u);
-        usuario.setClienteCallback(new ClienteCallbackImpl());
         fxmlLoader.setController(new vPrincipal(servidorCallback,usuario));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vPrincipal/vPrincipal.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));

@@ -1,4 +1,4 @@
-package tests;
+package test;
 
 import practica4.servidor.controladores.BDControlador;
 

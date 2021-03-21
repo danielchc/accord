@@ -10,8 +10,8 @@ public interface ClienteCallback extends Remote{
 
     void enviarMensaxe(Mensaxe message) throws RemoteException;
 
-    void rexistrarClienteDisponible(UUID novoCliente) throws RemoteException;
+    void rexistrarClienteDisponible(IUsuario novoCliente) throws RemoteException;
 
-    void eliminarClienteDisponible(UUID velloCliente) throws RemoteException;
+    void eliminarClienteDisponible(IUsuario velloCliente) throws RemoteException;
 
 }

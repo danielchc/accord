@@ -3,6 +3,7 @@ package practica4.cliente.controladores;
 import practica4.cliente.interfaces.EventosCliente;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
+import practica4.interfaces.IUsuario;
 
 import java.rmi.*;
 import java.rmi.server.*;
@@ -21,12 +22,12 @@ public class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteC
       eventos.onMensaxeRecibido(mensaxe);
    }          
 
-   public void rexistrarClienteDisponible(UUID uuid) throws RemoteException{
-      eventos.onUsuarioConectado(uuid);
+   public void rexistrarClienteDisponible(IUsuario usuario) throws RemoteException{
+      eventos.onUsuarioConectado(usuario);
    }        
    
-   public void eliminarClienteDisponible(UUID uuid) throws RemoteException{
-      eventos.onUsuarioDesconectado(uuid);
+   public void eliminarClienteDisponible(IUsuario usuario) throws RemoteException{
+      eventos.onUsuarioDesconectado(usuario);
    }
 
    public void setEventos(EventosCliente eventos) {

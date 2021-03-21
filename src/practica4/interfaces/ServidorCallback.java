@@ -9,7 +9,7 @@ public interface ServidorCallback extends Remote{
 
     boolean registrarCliente(IUsuario obj) throws RemoteException;
 
-    List<UUID> getListaClientes() throws RemoteException;
+    List<IUsuario> getListaClientes() throws RemoteException;
 
     IUsuario getCliente(UUID uuid) throws RemoteException;
 
