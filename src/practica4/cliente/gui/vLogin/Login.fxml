@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button layoutX="87.0" layoutY="338.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="62.0" prefWidth="328.0" text="Iniciar Sesión">
+         <font>
+            <Font size="20.0" />
+         </font></Button>
+      <TextField fx:id="nomeUsuario" layoutX="51.0" layoutY="210.0" onKeyPressed="#nomeUsuarioEnter" prefHeight="38.0" prefWidth="399.0" />
+      <Label layoutX="51.0" layoutY="164.0" prefHeight="46.0" prefWidth="328.0" text="Escriba un nome de usuario para comezar" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label alignment="TOP_CENTER" layoutX="87.0" layoutY="45.0" prefHeight="38.0" prefWidth="328.0" text="Práctica 1" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
