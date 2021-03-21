@@ -2,6 +2,7 @@ package practica4.cliente.obxectos;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Chat {
     private UUID de;
@@ -30,5 +31,13 @@ public class Chat {
 
     public void engadirMensaxe(Mensaxe mensaxe){
         this.mensaxes.add(mensaxe);
+    }
+
+    @Override
+    public String toString() {
+        return "\nChat{" +
+                "\nde=" + de +
+                "\n, mensaxes=" + mensaxes.stream().map(Mensaxe::toString).collect(Collectors.joining("\n")) +
+                "\n}\n";
     }
 }
