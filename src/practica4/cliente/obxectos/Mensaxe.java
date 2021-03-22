@@ -51,10 +51,6 @@ public class Mensaxe implements Serializable {
     }
 
     public String toString() {
-        return "Mensaxe{" +
-                "de=" + de +
-                ", para=" + para +
-                ", mensaxe='" + mensaxe + '\'' +
-                '}';
+        return mensaxe;
     }
 }

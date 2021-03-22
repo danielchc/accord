@@ -23,10 +23,10 @@ import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 public class vInicioSesionController implements Initializable {
-    private ServidorCallback servidorCallback;
-    private Stage stage;
+    private final ServidorCallback servidorCallback;
+    private final Stage stage;
     private IUsuario usuario;
-    private FXMLLoader fxmlLoader;
+    private final FXMLLoader fxmlLoader;
 
     @FXML
     private TextField tfNomeUsuario;
@@ -39,16 +39,15 @@ public class vInicioSesionController implements Initializable {
     public vInicioSesionController(ServidorCallback servidorCallback) {
         this.servidorCallback = servidorCallback;
         this.fxmlLoader = new FXMLLoader();
-        this.stage=new Stage();
+        this.stage = new Stage();
     }
 
     @FXML
     private void iniciarSesionClick(ActionEvent event) throws Exception {
         String u = tfNomeUsuario.getText();
         String p = tfContrasinal.getText();
-        if (p.length() == 0 || u.length() == 0) {
-            return;
-        }
+        if (p.length() == 0 || u.length() == 0) return;
+
 
         if (!servidorCallback.comprobarUsuario(u, p)) {
             lblContrasinalIncorrecto.setVisible(true);
@@ -56,7 +55,7 @@ public class vInicioSesionController implements Initializable {
             return;
         }
 
-        if(servidorCallback.tenIniciadoSesion(u)){
+        if (servidorCallback.tenIniciadoSesion(u)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Sesión iniciada");
             alert.setHeaderText("Este usuario xa ten inciada sesión");
@@ -67,21 +66,21 @@ public class vInicioSesionController implements Initializable {
 
         iniciarSesion(u);
 
-        ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
+        ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
     }
 
 
-    private void iniciarSesion(String  u) throws IOException {
+    private void iniciarSesion(String u) throws IOException {
         usuario = servidorCallback.getUsuario(u);
-        fxmlLoader.setController(new vPrincipal(servidorCallback,usuario));
+        fxmlLoader.setController(new vPrincipal(servidorCallback, usuario));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vPrincipal/vPrincipal.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
-        stage.setTitle("Accord: "+ u);
+        stage.setTitle("Accord: " + u);
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
                 try {
-                    if(usuario!=null && usuario.isRegistrado()){
+                    if (usuario != null && usuario.isRegistrado()) {
                         usuario.setRegistrado(false);
                         servidorCallback.desRegistrarCliente(usuario);
                     }
@@ -101,7 +100,6 @@ public class vInicioSesionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //BORRAR ESTOOOOOOOOOOOOOOO
-        //tfNomeUsuario.setText("dani");
         tfContrasinal.setText("abc123..");
     }
 }

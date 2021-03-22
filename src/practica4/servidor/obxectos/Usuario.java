@@ -4,6 +4,7 @@ import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 
 import java.rmi.RemoteException;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Usuario implements IUsuario {
@@ -59,5 +60,18 @@ public class Usuario implements IUsuario {
     @Override
     public String toString() {
         return getNomeUsuario();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(uuid, usuario.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 }
