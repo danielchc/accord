@@ -19,21 +19,16 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
 
     @Override
-    public boolean registrarCliente(IUsuario novoCliente) throws RemoteException{
-        if(listaClientes.containsKey(novoCliente.getUuid()))
-            return false;
-
+    public void registrarCliente(IUsuario novoCliente) throws RemoteException{
         System.out.println("Conectado novo cliente " + novoCliente.getUuid());
         listaClientes.put(novoCliente.getUuid(),novoCliente);
         notificarClientesConexion(novoCliente);
-        return true;
     }
 
     @Override
     public void desRegistrarCliente(IUsuario velloCliente) throws RemoteException{
         System.out.println("Cliente desconectado " + velloCliente.getUuid());
         listaClientes.remove(velloCliente.getUuid());
-
         notificarClientesDesconexion(velloCliente);
     }
 
@@ -60,6 +55,11 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     @Override
     public IUsuario getCliente(UUID uuid) throws RemoteException {
         return listaClientes.get(uuid);
+    }
+
+    public boolean tenIniciadoSesion(String nomeUsuario){
+        IUsuario u=bdControlador.getUsuario(nomeUsuario);
+        return listaClientes.containsKey(u.getUuid());
     }
 
 

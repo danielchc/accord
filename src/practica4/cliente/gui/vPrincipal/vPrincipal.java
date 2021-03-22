@@ -89,14 +89,7 @@ public class vPrincipal implements Initializable {
         try {
             usuario.setRegistrado(true);
             usuario.setClienteCallback(clienteCallback);
-            if(!servidorCallback.registrarCliente(usuario)){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Sesión iniciada");
-                alert.setHeaderText("Este usuario xa ten inciada sesión");
-                alert.setContentText(String.format("Xa existe unha instancia de este usuario iniciada"));
-                alert.showAndWait();
-                System.exit(1);
-            }
+            servidorCallback.registrarCliente(usuario);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

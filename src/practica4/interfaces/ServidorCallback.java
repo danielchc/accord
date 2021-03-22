@@ -7,7 +7,9 @@ import java.util.UUID;
 
 public interface ServidorCallback extends Remote{
 
-    boolean registrarCliente(IUsuario obj) throws RemoteException;
+    void registrarCliente(IUsuario obj) throws RemoteException;
+
+    boolean tenIniciadoSesion(String nomeUsuario) throws RemoteException;
 
     List<IUsuario> getListaClientes() throws RemoteException;
 

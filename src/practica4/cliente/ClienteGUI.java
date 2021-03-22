@@ -39,7 +39,7 @@ public class ClienteGUI extends Application {
         }
 
         Stage stage = new Stage();
-        stage.setTitle("Práctica 4");
+        stage.setTitle("Accord");
         stage.setResizable(false);
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(new vInicioSesionController(servidorCallback));

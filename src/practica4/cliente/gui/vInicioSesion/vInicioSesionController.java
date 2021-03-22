@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -51,9 +52,19 @@ public class vInicioSesionController implements Initializable {
 
         if (!servidorCallback.comprobarUsuario(u, p)) {
             lblContrasinalIncorrecto.setVisible(true);
-            System.out.println("Contraseña podre");
+            System.out.println("Contraseña incorrecta");
             return;
         }
+
+        if(servidorCallback.tenIniciadoSesion(u)){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Sesión iniciada");
+            alert.setHeaderText("Este usuario xa ten inciada sesión");
+            alert.setContentText(String.format("Xa existe unha instancia de este usuario iniciada"));
+            alert.showAndWait();
+            return;
+        }
+
         iniciarSesion(u);
 
         ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
@@ -65,7 +76,7 @@ public class vInicioSesionController implements Initializable {
         fxmlLoader.setController(new vPrincipal(servidorCallback,usuario));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vPrincipal/vPrincipal.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
-        stage.setTitle("Práctica 4: "+ u);
+        stage.setTitle("Accord: "+ u);
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
@@ -90,7 +101,7 @@ public class vInicioSesionController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //BORRAR ESTOOOOOOOOOOOOOOO
-        tfNomeUsuario.setText("dani");
+        //tfNomeUsuario.setText("dani");
         tfContrasinal.setText("abc123..");
     }
 }
