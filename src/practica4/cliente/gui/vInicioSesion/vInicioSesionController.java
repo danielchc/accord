@@ -59,7 +59,7 @@ public class vInicioSesionController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Sesión iniciada");
             alert.setHeaderText("Este usuario xa ten inciada sesión");
-            alert.setContentText(String.format("Xa existe unha instancia de este usuario iniciada"));
+            alert.setContentText("Xa existe unha instancia de este usuario iniciada");
             alert.showAndWait();
             return;
         }

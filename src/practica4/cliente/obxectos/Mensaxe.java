@@ -3,11 +3,8 @@ package practica4.cliente.obxectos;
 import practica4.interfaces.IUsuario;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 public class Mensaxe implements Serializable {
     private IUsuario de;
@@ -64,6 +61,6 @@ public class Mensaxe implements Serializable {
     public String toString() {
         SimpleDateFormat dateFormat=new SimpleDateFormat("HH:mm dd/MM");
 
-        return String.format("[%s] %s: %s",dateFormat.format(data).toString(),para.getNomeUsuario(),mensaxe);
+        return String.format("[%s] %s: %s", dateFormat.format(data),para.getNomeUsuario(),mensaxe);
     }
 }

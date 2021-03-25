@@ -2,17 +2,12 @@ package practica4.cliente;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.gui.vInicioSesion.vInicioSesionController;
-import practica4.cliente.gui.vPrincipal.vPrincipal;
-import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 import java.rmi.Naming;

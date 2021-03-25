@@ -9,7 +9,7 @@ import java.rmi.registry.LocateRegistry;
 
 public class Servidor{
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         int portNum=19000;
         String registryURL;
         registryURL = String.format("rmi://0.0.0.0:%d/servidor",portNum);
@@ -20,7 +20,7 @@ public class Servidor{
 
         }catch(Exception e){
             System.out.println(e);
-        };
+        }
     }
 
 

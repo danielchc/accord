@@ -3,6 +3,7 @@ package practica4.cliente.controladores;
 import javafx.application.Platform;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
+import practica4.cliente.obxectos.SolicitudeAmizade;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -12,15 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class ControladorMensaxes {
+public abstract class ControladorChat {
 
     private final IUsuario usuarioActual;
     private final ServidorCallback servidorCallback;
-    private HashMap<UUID, Chat> chats;
+    private final HashMap<UUID, Chat> chats;
     private ArrayList<IUsuario> usuariosDisponibles;
 
 
-    public ControladorMensaxes(IUsuario usuarioActual,ServidorCallback servidorCallback) {
+    public ControladorChat(IUsuario usuarioActual, ServidorCallback servidorCallback) {
         this.servidorCallback=servidorCallback;
         this.chats=new HashMap<UUID,Chat>();
         this.usuarioActual =usuarioActual;
@@ -33,7 +34,7 @@ public abstract class ControladorMensaxes {
             chats.put(u.getUuid(), new Chat(u));
     }
 
-    public void registrarCliente() {
+    public void rexistrarCliente() {
         try {
             ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(){
                 @Override
@@ -41,6 +42,11 @@ public abstract class ControladorMensaxes {
                     comprobarChat(mensaxe.getDe());
                     chats.get(mensaxe.getDe().getUuid()).engadirMensaxe(mensaxe);
                     mensaxeRecibido(mensaxe);
+                }
+
+                @Override
+                protected void onSolitudeAmizadeRecibida(SolicitudeAmizade solicitudeAmizade) {
+
                 }
 
                 @Override

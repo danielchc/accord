@@ -9,8 +9,8 @@ import java.util.*;
 
 public class ServidorCallbackImpl extends UnicastRemoteObject implements ServidorCallback {
 
-    private BDControlador bdControlador;
-    private HashMap<UUID, IUsuario> listaClientes;
+    private final BDControlador bdControlador;
+    private final HashMap<UUID, IUsuario> listaClientes;
     public ServidorCallbackImpl() throws RemoteException{
         super();
         listaClientes=new HashMap<UUID,IUsuario>();

@@ -3,8 +3,6 @@ package practica4.cliente.obxectos;
 import practica4.interfaces.IUsuario;
 
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Chat {
     private IUsuario con;

@@ -4,20 +4,17 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import practica4.cliente.controladores.ControladorMensaxes;
+import practica4.cliente.controladores.ControladorChat;
 import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -25,7 +22,7 @@ import java.util.ResourceBundle;
 
 public class vPrincipal implements Initializable {
 
-    ControladorMensaxes controladorMensaxes;
+    ControladorChat controladorChat;
     private final IUsuario usuarioActual;
 
     @FXML
@@ -37,7 +34,7 @@ public class vPrincipal implements Initializable {
 
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.usuarioActual = usuarioActual;
-        this.controladorMensaxes = new ControladorMensaxes(usuarioActual, servidorCallback) {
+        this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(Mensaxe m) {
                 cargarMensaxeInterfaz(m);
@@ -70,7 +67,7 @@ public class vPrincipal implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        controladorMensaxes.registrarCliente();
+        controladorChat.rexistrarCliente();
         lvListaClientes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -109,8 +106,8 @@ public class vPrincipal implements Initializable {
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
         Platform.runLater(() -> {
-            if (controladorMensaxes.existeChat(u.getUuid()))
-                lvMensaxes.getItems().addAll(controladorMensaxes.getChat(u.getUuid()).getMensaxes());
+            if (controladorChat.existeChat(u.getUuid()))
+                lvMensaxes.getItems().addAll(controladorChat.getChat(u.getUuid()).getMensaxes());
         });
     }
 
@@ -124,7 +121,7 @@ public class vPrincipal implements Initializable {
 
         Mensaxe m = null;
         try {
-            m = controladorMensaxes.enviarMensaxe(usuarioPara, mensaxeEnviar.getText());
+            m = controladorChat.enviarMensaxe(usuarioPara, mensaxeEnviar.getText());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
