@@ -4,12 +4,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import practica4.cliente.controladores.ClienteCallbackImpl;
-import practica4.cliente.gui.oChat.oChatController;
+import practica4.cliente.controladores.ControladorMensaxes;
 import practica4.cliente.interfaces.EventosCliente;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
@@ -26,11 +25,8 @@ import java.util.UUID;
 
 public class vPrincipal implements Initializable {
 
-    private final List<IUsuario> clientes;
-    private final ServidorCallback servidorCallback;
-    private final IUsuario usuario;
-
-    private HashMap<UUID, Chat> chats;
+    ControladorMensaxes controladorMensaxes;
+    private final IUsuario usuarioActual;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -39,133 +35,87 @@ public class vPrincipal implements Initializable {
     @FXML
     private ListView lvMensaxes;
 
-    public vPrincipal(ServidorCallback servidorCallback, IUsuario usuario) throws RemoteException {
-        this.servidorCallback=servidorCallback;
-        this.clientes=servidorCallback.getListaClientes();
-        this.usuario=usuario;
-        this.chats=new HashMap<UUID,Chat>();
+    public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
+        this.usuarioActual=usuarioActual;
+        this.controladorMensaxes= new ControladorMensaxes(usuarioActual,servidorCallback) {
+            @Override
+            public void mensaxeRecibido(Mensaxe m) {
+                cargarMensaxeInterfaz(m);
+            }
+            @Override
+            public void rexistroCorrecto(List<IUsuario> listaUsuariosConectados) {
+                for (IUsuario usuario : listaUsuariosConectados) {
+                    Platform.runLater(() -> {
+                        lvListaClientes.getItems().add(usuario);
+                    });
+                }
+            }
+            @Override
+            public void usuarioConectado(IUsuario u) {
+                Platform.runLater(()->{
+                    lvListaClientes.getItems().add(u);
+                });
+            }
+            @Override
+            public void usuarioDesconectado(IUsuario u) {
+                Platform.runLater(()->{
+                    lvListaClientes.getItems().remove(u);
+                });
+            }
+        };
     }
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cargarDisponibles();
-        registrarCliente();
+        controladorMensaxes.registrarCliente();
         lvListaClientes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-
-                if(lvListaClientes.getSelectionModel().getSelectedItems().size()!=1)return;
-
-                IUsuario u= (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-                Platform.runLater(()-> {
-                    lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
-                    if(chats.containsKey(u.getUuid()))
-                        lvMensaxes.getItems().addAll(chats.get(u.getUuid()).getMensaxes());
-                });
+                cargarTodosMensaxesIntefaz();
             }
         });
     }
 
-    private void registrarCliente() {
-        try {
-            ClienteCallbackImpl clienteCallback= null;
-            clienteCallback = new ClienteCallbackImpl();
-            clienteCallback.setEventos(
-                    new EventosCliente(){
-                        @Override
-                        public void onMensaxeRecibido(Mensaxe mensaxe) {
-                            mensaxeRecibido(mensaxe);
-                            System.out.println(mensaxe);
-                        }
+    private void cargarMensaxeInterfaz(Mensaxe m) {
+        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
 
-                        @Override
-                        public void onUsuarioConectado(IUsuario u) {
-                            if(u.getUuid().equals(usuario.getUuid()))return;
-                            clientes.add(u);
-                            Platform.runLater(()->{
-                                lvListaClientes.getItems().add(u);
-                            });
-                        }
-
-                        @Override
-                        public void onUsuarioDesconectado(IUsuario u) {
-                            clientes.remove(u.getUuid());
-                            System.out.println(u);
-                            Platform.runLater(()->{
-                                lvListaClientes.getItems().remove(u);
-                            });
-                        }
-                    }
-            );
-            usuario.setRegistrado(true);
-            usuario.setClienteCallback(clienteCallback);
-            servidorCallback.registrarCliente(usuario);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            Platform.exit();
-        }
-    }
-
-    private void cargarDisponibles(){
-        for(IUsuario cUUID:clientes){
-            Platform.runLater(()->{
-                lvListaClientes.getItems().add(cUUID);
+        IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
+        if (m.getDe().getUuid().equals(u.getUuid()) || m.getPara().getUuid().equals(u.getUuid())) {
+            Platform.runLater(() -> {
+                lvMensaxes.getItems().add(m);
             });
         }
     }
 
-    private void mensaxeRecibido(Mensaxe m){
-        if(!chats.containsKey(m.getDe())){
-            chats.put(m.getDe(),new Chat(m.getDe()));
-        }
-        chats.get(m.getDe()).engadirMensaxe(m);
-        System.out.println(chats);
-
-
-
-
-        //LOLL
-        if(lvListaClientes.getSelectionModel().getSelectedItems().size()==1){
-            IUsuario u=(IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-            System.out.println(u.getNomeUsuario());
-            if(m.getDe().equals(u.getUuid())) {
-                Platform.runLater(() -> {
-                    lvMensaxes.getItems().add(m);
-                });
-            }
-        }
-
-
+    private void cargarTodosMensaxesIntefaz(){
+        Platform.runLater(() -> {
+            lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
+        });
+        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
+        IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
+        Platform.runLater(() -> {
+            if(controladorMensaxes.existeChat(u.getUuid()))
+                lvMensaxes.getItems().addAll(controladorMensaxes.getChat(u.getUuid()).getMensaxes());
+        });
     }
 
 
+
     @FXML
-    private void enviarMensaxe(){
-        if(lvListaClientes.getSelectionModel().getSelectedItems().size()!=1)return;
-        UUID uuid= ((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0)).getUuid();
+    private void enviarMensaxeClick() {
+        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
+        if(mensaxeEnviar.getText().isEmpty())return;
 
+        IUsuario usuarioPara = ((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0));
+
+        Mensaxe m= null;
         try {
-            Mensaxe m=new Mensaxe(usuario.getUuid(),uuid,mensaxeEnviar.getText());
-            IUsuario k=servidorCallback.getCliente(uuid);
-            k.getClienteCallback().enviarMensaxe(m);
-
-
-            //DIOOS ARREGLA ESTO QUE DA ASCO
-
-
-            if(!chats.containsKey(m.getPara())){
-                chats.put(m.getPara(),new Chat(m.getPara()));
-            }
-
-            chats.get(m.getPara()).engadirMensaxe(m);
-            if(m.getDe().equals(((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0)).getUuid()));
-                lvMensaxes.getItems().add(m);
-
+            m = controladorMensaxes.enviarMensaxe(usuarioPara,mensaxeEnviar.getText());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        cargarMensaxeInterfaz(m);
+
         mensaxeEnviar.clear();
     }
 

@@ -1,24 +1,26 @@
 package practica4.cliente.obxectos;
 
+import practica4.interfaces.IUsuario;
+
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Chat {
-    private UUID de;
+    private IUsuario con;
     private ArrayList<Mensaxe> mensaxes;
 
-    public Chat(UUID de) {
-        this.de = de;
+    public Chat(IUsuario con) {
+        this.con = con;
         this.mensaxes= new ArrayList<Mensaxe>();
     }
 
-    public UUID getDe() {
-        return de;
+    public IUsuario getDe() {
+        return con;
     }
 
-    public void setDe(UUID de) {
-        this.de = de;
+    public void setDe(IUsuario de) {
+        this.con = de;
     }
 
     public ArrayList<Mensaxe> getMensaxes() {
@@ -36,8 +38,7 @@ public class Chat {
     @Override
     public String toString() {
         return "\nChat{" +
-                "\nde=" + de +
-                "\n, mensaxes=" + mensaxes.stream().map(Mensaxe::toString).collect(Collectors.joining("\n")) +
+                "\ncon=" + con +
                 "\n}\n";
     }
 }

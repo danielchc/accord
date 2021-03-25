@@ -6,7 +6,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="739.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ListView fx:id="lvListaClientes" layoutX="17.0" layoutY="45.0" prefHeight="364.0" prefWidth="217.0" />
-      <Button layoutX="662.0" layoutY="419.0" mnemonicParsing="false" onAction="#enviarMensaxe" text="Button" />
+      <Button layoutX="662.0" layoutY="419.0" mnemonicParsing="false" onAction="#enviarMensaxeClick" text="Button" />
       <TextField fx:id="mensaxeEnviar" layoutX="249.0" layoutY="419.0" prefHeight="25.0" prefWidth="397.0" />
       <ListView fx:id="lvMensaxes" layoutX="249.0" layoutY="45.0" prefHeight="355.0" prefWidth="468.0" />
    </children>

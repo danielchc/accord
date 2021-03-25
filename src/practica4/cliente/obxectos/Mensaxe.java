@@ -1,44 +1,47 @@
 package practica4.cliente.obxectos;
 
+import practica4.interfaces.IUsuario;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
 public class Mensaxe implements Serializable {
-    private UUID de;
-    private UUID para;
+    private IUsuario de;
+    private IUsuario para;
     private String mensaxe;
     private Date data;
 
-    public Mensaxe(UUID de, UUID para, String mensaxe, Date data) {
+    public Mensaxe(IUsuario de, IUsuario para, String mensaxe, Date data) {
         this.de = de;
         this.para = para;
         this.mensaxe = mensaxe;
         this.data = data;
     }
 
-    public Mensaxe(UUID de, UUID para, String mensaxe){
+    public Mensaxe(IUsuario de, IUsuario para, String mensaxe){
         this.de = de;
         this.para = para;
         this.mensaxe = mensaxe;
         this.data=new Date();
     }
 
-    public UUID getDe() {
+    public IUsuario getDe() {
         return de;
     }
 
-    public void setDe(UUID de) {
+    public void setDe(IUsuario de) {
         this.de = de;
     }
 
-    public UUID getPara() {
+    public IUsuario getPara() {
         return para;
     }
 
-    public void setPara(UUID para) {
+    public void setPara(IUsuario para) {
         this.para = para;
     }
 
@@ -51,6 +54,8 @@ public class Mensaxe implements Serializable {
     }
 
     public String toString() {
-        return mensaxe;
+        SimpleDateFormat dateFormat=new SimpleDateFormat("HH:mm dd/MM");
+
+        return String.format("[%s] %s: %s",dateFormat.format(data).toString(),para.getNomeUsuario(),mensaxe);
     }
 }

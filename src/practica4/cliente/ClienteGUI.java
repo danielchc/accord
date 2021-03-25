@@ -16,14 +16,13 @@ import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.util.UUID;
 
 public class ClienteGUI extends Application {
     final static String host="localhost";
     final static int porto=19000;
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //Thread.setDefaultUncaughtExceptionHandler(ClienteGUI::showError);
 
         ServidorCallback servidorCallback;
         try {
@@ -47,5 +46,18 @@ public class ClienteGUI extends Application {
 
         stage.setScene(new Scene(fxmlLoader.load()));
         stage.show();
+    }
+
+    private static void showError(Thread thread, Throwable throwable) {
+        System.err.println(throwable.toString());
+        if (Platform.isFxApplicationThread()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro na aplicación");
+            alert.setHeaderText("Ocorreu un erro inesperado");
+            TextArea tA=new TextArea(throwable.getMessage());
+            tA.setEditable(false);
+            tA.setWrapText(true);
+            alert.getDialogPane().setExpandableContent(tA);
+        }
     }
 }

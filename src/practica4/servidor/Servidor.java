@@ -13,8 +13,6 @@ public class Servidor{
         int portNum=19000;
         String registryURL;
         registryURL = String.format("rmi://0.0.0.0:%d/servidor",portNum);
-
-        
         try{
             startRegistry(portNum);
             ServidorCallbackImpl exportedObj = new ServidorCallbackImpl();
@@ -23,10 +21,6 @@ public class Servidor{
         }catch(Exception e){
             System.out.println(e);
         };
-    
-
-
-        
     }
 
 
