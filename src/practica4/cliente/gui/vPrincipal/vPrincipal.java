@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import practica4.cliente.controladores.ClienteCallbackImpl;
 import practica4.cliente.controladores.ControladorMensaxes;
-import practica4.cliente.interfaces.EventosCliente;
-import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
@@ -18,10 +15,8 @@ import practica4.interfaces.ServidorCallback;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 public class vPrincipal implements Initializable {
 
@@ -36,12 +31,13 @@ public class vPrincipal implements Initializable {
     private ListView lvMensaxes;
 
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
-        this.usuarioActual=usuarioActual;
-        this.controladorMensaxes= new ControladorMensaxes(usuarioActual,servidorCallback) {
+        this.usuarioActual = usuarioActual;
+        this.controladorMensaxes = new ControladorMensaxes(usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(Mensaxe m) {
                 cargarMensaxeInterfaz(m);
             }
+
             @Override
             public void rexistroCorrecto(List<IUsuario> listaUsuariosConectados) {
                 for (IUsuario usuario : listaUsuariosConectados) {
@@ -50,15 +46,17 @@ public class vPrincipal implements Initializable {
                     });
                 }
             }
+
             @Override
             public void usuarioConectado(IUsuario u) {
-                Platform.runLater(()->{
+                Platform.runLater(() -> {
                     lvListaClientes.getItems().add(u);
                 });
             }
+
             @Override
             public void usuarioDesconectado(IUsuario u) {
-                Platform.runLater(()->{
+                Platform.runLater(() -> {
                     lvListaClientes.getItems().remove(u);
                 });
             }
@@ -87,30 +85,29 @@ public class vPrincipal implements Initializable {
         }
     }
 
-    private void cargarTodosMensaxesIntefaz(){
+    private void cargarTodosMensaxesIntefaz() {
         Platform.runLater(() -> {
             lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
         });
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
         Platform.runLater(() -> {
-            if(controladorMensaxes.existeChat(u.getUuid()))
+            if (controladorMensaxes.existeChat(u.getUuid()))
                 lvMensaxes.getItems().addAll(controladorMensaxes.getChat(u.getUuid()).getMensaxes());
         });
     }
 
 
-
     @FXML
     private void enviarMensaxeClick() {
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
-        if(mensaxeEnviar.getText().isEmpty())return;
+        if (mensaxeEnviar.getText().isEmpty()) return;
 
         IUsuario usuarioPara = ((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0));
 
-        Mensaxe m= null;
+        Mensaxe m = null;
         try {
-            m = controladorMensaxes.enviarMensaxe(usuarioPara,mensaxeEnviar.getText());
+            m = controladorMensaxes.enviarMensaxe(usuarioPara, mensaxeEnviar.getText());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
