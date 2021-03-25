@@ -4,15 +4,20 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import practica4.cliente.controladores.ControladorMensaxes;
+import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -70,6 +75,18 @@ public class vPrincipal implements Initializable {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 cargarTodosMensaxesIntefaz();
+            }
+        });
+        lvMensaxes.setCellFactory(param -> new ListCell<Mensaxe>() {
+            @Override
+            protected void updateItem(Mensaxe item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(null);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setGraphic(new oMensaxe(item));
+                }
             }
         });
     }

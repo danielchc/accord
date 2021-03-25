@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root prefHeight="85.0" prefWidth="375.0" type="javafx.scene.layout.VBox"  xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="lblNomeUsuario" layoutX="14.0" layoutY="14.0" text="Usuario">
+      <font>
+         <Font name="System Bold" size="14.0" />
+      </font></Label>
+   <Label fx:id="lblMensaxe" layoutX="14.0" layoutY="38.0" prefHeight="39.0" prefWidth="372.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget congue tellus. Integer a congue ligula. Donec porttitor lacinia mauris, sit amet gravida elit. Pellentesque eu faucibus magna, sed euismod metus. Nulla ac lobortis diam, sit amet rutrum turpis. Nunc mattis purus et sem malesuada, nec facilisis turpis dapibus. Nam gravida, neque non consequat finibus, dolor odio porta quam, quis dignissim arcu magna quis lacus." wrapText="true" />
+   <Label fx:id="lblData" layoutX="262.0" layoutY="86.0" text="18:33 25/03">
+      <font>
+         <Font name="System Bold" size="12.0" />
+      </font>
+   </Label>
+</fx:root>

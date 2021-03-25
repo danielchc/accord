@@ -53,6 +53,14 @@ public class Mensaxe implements Serializable {
         this.mensaxe = mensaxe;
     }
 
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
     public String toString() {
         SimpleDateFormat dateFormat=new SimpleDateFormat("HH:mm dd/MM");
 

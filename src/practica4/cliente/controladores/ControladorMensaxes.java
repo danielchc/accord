@@ -1,7 +1,6 @@
 package practica4.cliente.controladores;
 
 import javafx.application.Platform;
-import practica4.cliente.interfaces.EventosCliente;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
@@ -36,9 +35,7 @@ public abstract class ControladorMensaxes {
 
     public void registrarCliente() {
         try {
-            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl();
-            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaClientes();
-            clienteCallback.setEventos(new EventosCliente() {
+            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(){
                 @Override
                 public void onMensaxeRecibido(Mensaxe mensaxe) {
                     comprobarChat(mensaxe.getDe());
@@ -59,7 +56,8 @@ public abstract class ControladorMensaxes {
                     usuariosDisponibles.remove(u);
                     usuarioDesconectado(u);
                 }
-            });
+            };
+            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaClientes();
             usuarioActual.setRegistrado(true);
             usuarioActual.setClienteCallback(clienteCallback);
             servidorCallback.registrarCliente(usuarioActual);
