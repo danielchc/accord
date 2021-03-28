@@ -67,14 +67,7 @@ public abstract class ControladorChat {
 
 
             };
-            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaClientes().stream().map(k-> {
-                try {
-                    return k.getUsuario();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }).collect(Collectors.toList());
+            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaUsuarios();
 
             usuarioActual.setRegistrado(true);
             servidorCallback.registrarCliente(clienteCallback);

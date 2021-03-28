@@ -10,7 +10,7 @@ public interface ServidorCallback extends Remote{
 
     boolean tenIniciadoSesion(String nomeUsuario) throws RemoteException;
 
-    List<ClienteCallback> getListaClientes() throws RemoteException;
+    List<IUsuario> getListaUsuarios() throws RemoteException;
 
     void registrarCliente(ClienteCallback obj) throws RemoteException;
 

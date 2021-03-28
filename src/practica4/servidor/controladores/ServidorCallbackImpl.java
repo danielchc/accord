@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ServidorCallbackImpl extends UnicastRemoteObject implements ServidorCallback {
 
@@ -48,8 +49,15 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public List<ClienteCallback> getListaClientes() throws RemoteException{
-        return new ArrayList<ClienteCallback>(listaClientes.values());
+    public List<IUsuario> getListaUsuarios() throws RemoteException{
+        return new ArrayList<IUsuario>(listaClientes.values().stream().map(k-> {
+            try {
+                return k.getUsuario();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).collect(Collectors.toList()));
     }
 
     @Override
