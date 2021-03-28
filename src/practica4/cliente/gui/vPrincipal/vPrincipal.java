@@ -14,7 +14,6 @@ import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
-
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.ResourceBundle;
 public class vPrincipal implements Initializable {
 
     ControladorChat controladorChat;
-    private final IUsuario usuarioActual;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -33,7 +31,6 @@ public class vPrincipal implements Initializable {
     private ListView lvMensaxes;
 
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
-        this.usuarioActual = usuarioActual;
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(Mensaxe m) {

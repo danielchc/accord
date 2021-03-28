@@ -2,9 +2,10 @@ package practica4.servidor;
 
 import practica4.servidor.controladores.ServidorCallbackImpl;
 
-import java.rmi.*;
-import java.rmi.registry.Registry;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 
 public class Servidor{

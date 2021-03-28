@@ -82,7 +82,7 @@ public class vInicioSesionController implements Initializable {
                 try {
                     if (usuario != null && usuario.isRegistrado()) {
                         usuario.setRegistrado(false);
-                        servidorCallback.desRegistrarCliente(usuario);
+                        servidorCallback.desRegistrarCliente(usuario.getUuid());
                     }
                 } catch (RemoteException e) {
                     System.out.println(e);

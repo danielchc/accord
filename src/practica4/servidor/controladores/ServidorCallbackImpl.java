@@ -1,41 +1,41 @@
 package practica4.servidor.controladores;
 
+import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
-import java.rmi.*;
-import java.rmi.server.*;
-import java.util.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class ServidorCallbackImpl extends UnicastRemoteObject implements ServidorCallback {
 
     private final BDControlador bdControlador;
-    private final HashMap<UUID, IUsuario> listaClientes;
+    private final HashMap<UUID, ClienteCallback> listaClientes;
     public ServidorCallbackImpl() throws RemoteException{
         super();
-        listaClientes=new HashMap<UUID,IUsuario>();
+        listaClientes=new HashMap<UUID,ClienteCallback>();
         bdControlador=new BDControlador();
     }
 
 
     @Override
-    public void registrarCliente(IUsuario novoCliente) throws RemoteException{
+    public void registrarCliente(ClienteCallback novoCliente) throws RemoteException{
         System.out.println("Conectado novo cliente " + novoCliente.getUuid());
-        listaClientes.put(novoCliente.getUuid(),novoCliente);
+        listaClientes.put(novoCliente.getUsuario().getUuid(),novoCliente);
         notificarClientesConexion(novoCliente);
     }
 
     @Override
-    public void desRegistrarCliente(IUsuario velloCliente) throws RemoteException{
-        System.out.println("Cliente desconectado " + velloCliente.getUuid());
-        listaClientes.remove(velloCliente.getUuid());
-        notificarClientesDesconexion(velloCliente);
+    public void desRegistrarCliente(UUID velloClienteUUID) throws RemoteException{
+        System.out.println("Cliente desconectado " + velloClienteUUID);
+        notificarClientesDesconexion(listaClientes.get(velloClienteUUID));
+        listaClientes.remove(velloClienteUUID);
     }
 
-    @Override
-    public String getNomeUsuario(UUID uuid) throws RemoteException {
-        return listaClientes.get(uuid).getNomeUsuario();
-    }
 
     @Override
     public boolean comprobarUsuario(String nomeUsuario, String contrasinal) throws RemoteException {
@@ -48,31 +48,31 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public List<IUsuario> getListaClientes() throws RemoteException{
-        return new ArrayList<IUsuario>(listaClientes.values());
+    public List<ClienteCallback> getListaClientes() throws RemoteException{
+        return new ArrayList<ClienteCallback>(listaClientes.values());
     }
 
     @Override
-    public IUsuario getCliente(UUID uuid) throws RemoteException {
+    public ClienteCallback getCliente(UUID uuid) throws RemoteException {
         return listaClientes.get(uuid);
     }
+
 
     public boolean tenIniciadoSesion(String nomeUsuario){
         IUsuario u=bdControlador.getUsuario(nomeUsuario);
         return listaClientes.containsKey(u.getUuid());
     }
 
-
-
-    private synchronized void notificarClientesConexion(IUsuario novoCliente) throws RemoteException{
-        for(IUsuario cb:listaClientes.values()){
-            cb.getClienteCallback().rexistrarClienteDisponible(novoCliente);
+    private synchronized void notificarClientesConexion(ClienteCallback novoCliente) throws RemoteException{
+        for(ClienteCallback cb:listaClientes.values()){
+            if(true) //Comprobar se son amigos novoClient e cb
+                cb.rexistrarUsuarioDisponible(novoCliente.getUsuario());
         }
     }
 
-    private synchronized void notificarClientesDesconexion(IUsuario velloCliente) throws RemoteException{
-        for(IUsuario cb:listaClientes.values()){
-            cb.getClienteCallback().eliminarClienteDisponible(velloCliente);
+    private synchronized void notificarClientesDesconexion(ClienteCallback velloCliente) throws RemoteException{
+        for(ClienteCallback cb:listaClientes.values()){
+            cb.eliminarUsuarioDisponible(velloCliente.getUsuario());
         }
     }
 

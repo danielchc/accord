@@ -1,6 +1,5 @@
 package practica4.servidor.obxectos;
 
-import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 
 import java.rmi.RemoteException;
@@ -11,7 +10,6 @@ public class Usuario implements IUsuario {
     private UUID uuid;
     private String nomeUsuario;
     private boolean registrado;
-    private ClienteCallback clienteCallback;
 
     public Usuario(UUID uuid, String nomeUsuario) throws RemoteException {
         this.registrado=false;
@@ -47,14 +45,6 @@ public class Usuario implements IUsuario {
     @Override
     public void setRegistrado(boolean registrado) {
         this.registrado = registrado;
-    }
-
-    public ClienteCallback getClienteCallback() {
-        return clienteCallback;
-    }
-
-    public void setClienteCallback(ClienteCallback clienteCallback) {
-        this.clienteCallback = clienteCallback;
     }
 
     @Override

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.cliente.obxectos.SolicitudeAmizade;
+import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class ControladorChat {
 
@@ -24,7 +26,7 @@ public abstract class ControladorChat {
     public ControladorChat(IUsuario usuarioActual, ServidorCallback servidorCallback) {
         this.servidorCallback=servidorCallback;
         this.chats=new HashMap<UUID,Chat>();
-        this.usuarioActual =usuarioActual;
+        this.usuarioActual=usuarioActual;
         this.usuariosDisponibles =new ArrayList<IUsuario>();
     }
 
@@ -36,7 +38,7 @@ public abstract class ControladorChat {
 
     public void rexistrarCliente() {
         try {
-            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(){
+            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(usuarioActual){
                 @Override
                 public void onMensaxeRecibido(Mensaxe mensaxe) {
                     comprobarChat(mensaxe.getDe());
@@ -50,7 +52,7 @@ public abstract class ControladorChat {
                 }
 
                 @Override
-                public void onUsuarioConectado(IUsuario u) {
+                protected void onUsuarioConectado(IUsuario u) throws RemoteException {
                     if(u.getUuid().equals(usuarioActual.getUuid()))return;
                     if(!usuariosDisponibles.contains(u))
                         usuariosDisponibles.add(u);
@@ -58,18 +60,26 @@ public abstract class ControladorChat {
                 }
 
                 @Override
-                public void onUsuarioDesconectado(IUsuario u) {
+                protected void onUsuarioDesconectado(IUsuario u) throws RemoteException {
                     usuariosDisponibles.remove(u);
                     usuarioDesconectado(u);
                 }
+
+
             };
-            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaClientes();
+            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaClientes().stream().map(k-> {
+                try {
+                    return k.getUsuario();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }).collect(Collectors.toList());
+
             usuarioActual.setRegistrado(true);
-            usuarioActual.setClienteCallback(clienteCallback);
-            servidorCallback.registrarCliente(usuarioActual);
+            servidorCallback.registrarCliente(clienteCallback);
 
             rexistroCorrecto(usuariosDisponibles);
-
         } catch (RemoteException e) {
             e.printStackTrace();
             Platform.exit();
@@ -77,9 +87,10 @@ public abstract class ControladorChat {
     }
 
     public Mensaxe enviarMensaxe(IUsuario para,String mensaxe) throws RemoteException {
+        ClienteCallback cl=servidorCallback.getCliente(para.getUuid());
         comprobarChat(para);
         Mensaxe m = new Mensaxe(usuarioActual, para, mensaxe);
-        para.getClienteCallback().enviarMensaxe(m);
+        cl.enviarMensaxe(m);
         chats.get(m.getPara().getUuid()).engadirMensaxe(m);
         return m;
     }
