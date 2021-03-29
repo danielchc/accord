@@ -3,6 +3,8 @@ package practica4.cliente.gui.vPrincipal;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
@@ -10,14 +12,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import practica4.cliente.controladores.ControladorChat;
 import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
+import practica4.cliente.gui.obxectos.oUsuario.oUsuario;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class vPrincipal implements Initializable {
 
@@ -30,6 +32,8 @@ public class vPrincipal implements Initializable {
     @FXML
     private ListView lvMensaxes;
 
+    private ObservableList<IUsuario> amigos;
+
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
@@ -38,15 +42,16 @@ public class vPrincipal implements Initializable {
             }
 
             @Override
-            public void rexistroCorrecto(List<IUsuario> listaUsuariosConectados) {
+            public void rexistroCorrecto(Map<UUID, IUsuario> amigos) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().addAll(listaUsuariosConectados);
+                    lvListaClientes.getItems().addAll(amigos.values());
                 });
             }
 
             @Override
             public void usuarioConectado(IUsuario u) {
                 Platform.runLater(() -> {
+                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
                     lvListaClientes.getItems().add(u);
                 });
             }
@@ -54,7 +59,8 @@ public class vPrincipal implements Initializable {
             @Override
             public void usuarioDesconectado(IUsuario u) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().remove(u);
+                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
+                    lvListaClientes.getItems().add(u);
                 });
             }
         };
@@ -78,6 +84,18 @@ public class vPrincipal implements Initializable {
                     setText(null);
                 } else {
                     setGraphic(new oMensaxe(item));
+                }
+            }
+        });
+        lvListaClientes.setCellFactory(param -> new ListCell<IUsuario>() {
+            @Override
+            protected void updateItem(IUsuario item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(null);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setGraphic(new oUsuario(item));
                 }
             }
         });
