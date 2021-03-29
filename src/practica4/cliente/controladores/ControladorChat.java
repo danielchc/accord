@@ -1,11 +1,8 @@
 package practica4.cliente.controladores;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
-import practica4.cliente.obxectos.SolicitudeAmizade;
 import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
@@ -47,11 +44,6 @@ public abstract class ControladorChat {
                 }
 
                 @Override
-                protected void onSolitudeAmizadeRecibida(SolicitudeAmizade solicitudeAmizade) {
-
-                }
-
-                @Override
                 protected void onUsuarioConectado(IUsuario u) throws RemoteException {
                     if (u.getUuid().equals(usuarioActual.getUuid())) return;
                     amigos.put(u.getUuid(),u);
@@ -77,6 +69,7 @@ public abstract class ControladorChat {
     }
 
     public Mensaxe enviarMensaxe(IUsuario para, String mensaxe) throws RemoteException {
+        if(!para.isConectado()) return null;
         ClienteCallback cl = servidorCallback.getCliente(para.getUuid());
         comprobarChat(para);
         Mensaxe m = new Mensaxe(usuarioActual, para, mensaxe);

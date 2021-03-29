@@ -1,7 +1,6 @@
 package practica4.cliente.controladores;
 
 import practica4.cliente.obxectos.Mensaxe;
-import practica4.cliente.obxectos.SolicitudeAmizade;
 import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IUsuario;
 
@@ -34,10 +33,6 @@ public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements
       onUsuarioDesconectado(velloUsuario);
    }
 
-   public void enviarSolicitudeAmizade(SolicitudeAmizade solicitudeAmizade){
-      onSolitudeAmizadeRecibida(solicitudeAmizade);
-   }
-
    @Override
    public IUsuario getUsuario() throws RemoteException{
       return usuario;
@@ -52,8 +47,6 @@ public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements
    public UUID getUuid() throws RemoteException {
       return usuario.getUuid();
    }
-
-   protected abstract void onSolitudeAmizadeRecibida(SolicitudeAmizade solicitudeAmizade);
 
 
    protected abstract void onUsuarioConectado(IUsuario usuario) throws RemoteException;

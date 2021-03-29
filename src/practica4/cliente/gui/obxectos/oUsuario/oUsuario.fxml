@@ -9,7 +9,7 @@
 <fx:root alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="196.0" spacing="10.0" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <Pane>
       <children>
-         <Circle fill="DODGERBLUE" layoutX="26.0" layoutY="26.0" radius="17.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+         <Circle fx:id="backGr" fill="DODGERBLUE" layoutX="26.0" layoutY="26.0" radius="17.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
          <Label fx:id="lblIncial" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="9.0" prefHeight="34.0" prefWidth="34.0" text="U" textAlignment="CENTER">
             <font>
                <Font name="System Bold" size="18.0" />

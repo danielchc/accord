@@ -6,24 +6,32 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import practica4.cliente.controladores.ControladorChat;
 import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.gui.obxectos.oUsuario.oUsuario;
+import practica4.cliente.gui.vAmigos.vAmigosController;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
+import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.*;
 
 public class vPrincipal implements Initializable {
 
-    ControladorChat controladorChat;
+    private ControladorChat controladorChat;
+    private ServidorCallback servidorCallback;
+    private IUsuario usuarioActual;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -31,10 +39,14 @@ public class vPrincipal implements Initializable {
     private ListView lvListaClientes;
     @FXML
     private ListView lvMensaxes;
+    @FXML
+    private Button btnAmigos;
 
     private ObservableList<IUsuario> amigos;
 
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
+        this.servidorCallback=servidorCallback;
+        this.usuarioActual=usuarioActual;
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(Mensaxe m) {
@@ -99,6 +111,7 @@ public class vPrincipal implements Initializable {
                 }
             }
         });
+        btnAmigos.setText("Amigos (1)");
     }
 
     private void cargarMensaxeInterfaz(Mensaxe m) {
@@ -138,9 +151,21 @@ public class vPrincipal implements Initializable {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        cargarMensaxeInterfaz(m);
-
         mensaxeEnviar.clear();
+        if(m==null)return;
+
+        cargarMensaxeInterfaz(m);
+    }
+
+    @FXML
+    private void engadirAmigos() throws IOException {
+        Stage stage=new Stage();
+        FXMLLoader fxmlLoader=new FXMLLoader();
+        fxmlLoader.setController(new vAmigosController(servidorCallback,usuarioActual));
+        fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vAmigos/vAmigos.fxml"));
+        stage.setScene(new Scene(fxmlLoader.load()));
+        stage.setResizable(false);
+        stage.show();
     }
 
 }

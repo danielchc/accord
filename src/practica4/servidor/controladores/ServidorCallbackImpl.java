@@ -57,6 +57,16 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
+    public List<IUsuario> buscarUsuarios(String query, IUsuario usuario) throws RemoteException {
+        return bdControlador.buscarUsuarios(query,usuario);
+    }
+
+    @Override
+    public void enviarSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) throws RemoteException{
+        bdControlador.crearSolicitude(usuarioActual,usuarioRequest);
+    }
+
+    @Override
     public List<IUsuario> getListaUsuarios() throws RemoteException{
         return new ArrayList<IUsuario>(listaClientes.values().stream().map(k-> {
             try {

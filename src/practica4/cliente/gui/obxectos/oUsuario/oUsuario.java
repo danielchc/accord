@@ -19,13 +19,15 @@ public class oUsuario extends HBox {
     private Label lblIncial;
     @FXML
     private Circle isConectado;
+    @FXML
+    private Circle backGr;
 
 
     public oUsuario(IUsuario u) {
         SimpleDateFormat dateFormat=new SimpleDateFormat("HH:mm dd/MM");
 
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("oUsuario.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/practica4/cliente/gui/obxectos/oUsuario/oUsuario.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         try {
@@ -37,7 +39,6 @@ public class oUsuario extends HBox {
         lblNomeUsuario.setText(u.getNomeUsuario());
         lblIncial.setText(u.getNomeUsuario().substring(0,1).toUpperCase());
         isConectado.setVisible(u.isConectado());
-
-
     }
+
 }

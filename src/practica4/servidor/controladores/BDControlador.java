@@ -6,6 +6,7 @@ import practica4.servidor.obxectos.Usuario;
 import java.rmi.RemoteException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BDControlador {
@@ -77,8 +78,8 @@ public class BDControlador {
         PreparedStatement stmUsuario = null;
         ResultSet resultValidacion;
         try {
-            stmUsuario = conn.prepareStatement("SELECT u.* FROM amigos AS a JOIN usuarios u on u.uuid = a.u1 OR a.u2 = u.uuid\n" +
-                    "WHERE (a.u1=? or a.u2=?) AND NOT u.uuid=?;");
+            stmUsuario = conn.prepareStatement("SELECT u.* FROM amigos AS a JOIN usuarios u on u.uuid = a.u1 OR a.u2 = u.uuid " +
+                    "WHERE (a.u1=? or a.u2=?) AND NOT u.uuid=? AND aceptado=1;");
             stmUsuario.setString(1, usuario.getUuid().toString());
             stmUsuario.setString(2, usuario.getUuid().toString());
             stmUsuario.setString(3, usuario.getUuid().toString());
@@ -127,4 +128,55 @@ public class BDControlador {
     }
 
 
+    public List<IUsuario> buscarUsuarios(String query, IUsuario usuario) {
+        ArrayList<IUsuario> usuarios= new ArrayList<IUsuario>();
+        PreparedStatement stmUsuario = null;
+        ResultSet resultValidacion;
+        try {
+            stmUsuario = conn.prepareStatement("select * from usuarios AS u WHERE\n" +
+                    "(u.uuid NOT IN (SELECT u1 from amigos WHERE u2=?)) AND\n" +
+                    "(u.uuid NOT IN (SELECT u2 from amigos WHERE u1=?))\n" +
+                    "AND NOT u.uuid=? AND LOWER(nomeUsuario) LIKE LOWER(?);");
+            stmUsuario.setString(1, usuario.getUuid().toString());
+            stmUsuario.setString(2, usuario.getUuid().toString());
+            stmUsuario.setString(3, usuario.getUuid().toString());
+            stmUsuario.setString(4, "%"+query+"%");
+            resultValidacion = stmUsuario.executeQuery();
+
+            while (resultValidacion.next()){
+                usuarios.add(new Usuario(
+                        UUID.fromString(resultValidacion.getString("uuid")),
+                        resultValidacion.getString("nomeUsuario")
+                ));
+            }
+        } catch (SQLException | RemoteException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmUsuario.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible cerrar cursores");
+            }
+        }
+        return usuarios;
+    }
+
+    public void crearSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) {
+        PreparedStatement stmMensaxe = null;
+        try {
+            stmMensaxe = conn.prepareStatement("INSERT INTO amigos VALUES(?,?,0);");
+            stmMensaxe.setString(1, usuarioActual.getUuid().toString());
+            stmMensaxe.setString(2, usuarioRequest.getUuid().toString());
+            stmMensaxe.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmMensaxe != null) stmMensaxe.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible pechar os cursores.");
+            }
+        }
+    }
 }
