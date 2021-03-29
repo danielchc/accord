@@ -39,11 +39,9 @@ public class vPrincipal implements Initializable {
 
             @Override
             public void rexistroCorrecto(List<IUsuario> listaUsuariosConectados) {
-                for (IUsuario usuario : listaUsuariosConectados) {
-                    Platform.runLater(() -> {
-                        lvListaClientes.getItems().add(usuario);
-                    });
-                }
+                Platform.runLater(() -> {
+                    lvListaClientes.getItems().addAll(listaUsuariosConectados);
+                });
             }
 
             @Override
