@@ -80,8 +80,8 @@ public class vInicioSesionController implements Initializable {
             @Override
             public void handle(WindowEvent t) {
                 try {
-                    if (usuario != null && usuario.isRegistrado()) {
-                        usuario.setRegistrado(false);
+                    if (usuario != null && usuario.isConectado()) {
+                        usuario.setConectado(false);
                         servidorCallback.desRegistrarCliente(usuario.getUuid());
                     }
                 } catch (RemoteException e) {

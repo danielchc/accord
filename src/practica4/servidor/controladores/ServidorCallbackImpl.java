@@ -49,6 +49,14 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
+    public List<IUsuario> getAmigos(IUsuario usuario) throws RemoteException {
+        return bdControlador.getAmigos(usuario).stream().map(k->{
+            k.setConectado(listaClientes.containsKey(k.getUuid()));
+            return k;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public List<IUsuario> getListaUsuarios() throws RemoteException{
         return new ArrayList<IUsuario>(listaClientes.values().stream().map(k-> {
             try {
@@ -73,7 +81,7 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
     private synchronized void notificarClientesConexion(ClienteCallback novoCliente) throws RemoteException{
         for(ClienteCallback cb:listaClientes.values()){
-            if(true) //Comprobar se son amigos novoClient e cb
+            if(bdControlador.sonAmigos(novoCliente.getUsuario(),cb.getUsuario()))
                 cb.rexistrarUsuarioDisponible(novoCliente.getUsuario());
         }
     }

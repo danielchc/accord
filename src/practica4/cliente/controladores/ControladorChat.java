@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public abstract class ControladorChat {
 
@@ -67,9 +66,9 @@ public abstract class ControladorChat {
 
 
             };
-            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getListaUsuarios();
+            usuariosDisponibles= (ArrayList<IUsuario>) servidorCallback.getAmigos(usuarioActual);
 
-            usuarioActual.setRegistrado(true);
+            usuarioActual.setConectado(true);
             servidorCallback.registrarCliente(clienteCallback);
 
             rexistroCorrecto(usuariosDisponibles);

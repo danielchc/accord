@@ -9,10 +9,10 @@ import java.util.UUID;
 public class Usuario implements IUsuario {
     private UUID uuid;
     private String nomeUsuario;
-    private boolean registrado;
+    private boolean conectado;
 
     public Usuario(UUID uuid, String nomeUsuario) throws RemoteException {
-        this.registrado=false;
+        this.conectado =false;
         this.uuid=uuid;
         this.nomeUsuario=nomeUsuario;
     }
@@ -38,18 +38,18 @@ public class Usuario implements IUsuario {
     }
 
     @Override
-    public boolean isRegistrado() {
-        return registrado;
+    public boolean isConectado() {
+        return conectado;
     }
 
     @Override
-    public void setRegistrado(boolean registrado) {
-        this.registrado = registrado;
+    public void setConectado(boolean conectado) {
+        this.conectado = conectado;
     }
 
     @Override
     public String toString() {
-        return getNomeUsuario();
+        return conectado + " -> " + getNomeUsuario();
     }
 
     @Override

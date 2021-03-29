@@ -2,11 +2,12 @@ package practica4.interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
-public interface ServidorCallback extends Remote{
+public interface ServidorCallback extends Remote {
 
     boolean tenIniciadoSesion(String nomeUsuario) throws RemoteException;
 
@@ -18,8 +19,10 @@ public interface ServidorCallback extends Remote{
 
     ClienteCallback getCliente(UUID uuid) throws RemoteException;
 
-    boolean comprobarUsuario(String nomeUsuario,String contrasinal)  throws RemoteException;
+    boolean comprobarUsuario(String nomeUsuario, String contrasinal) throws RemoteException;
 
-    IUsuario getUsuario(String nomeUsuario)  throws RemoteException;
+    IUsuario getUsuario(String nomeUsuario) throws RemoteException;
+
+    List<IUsuario> getAmigos(IUsuario usuario) throws RemoteException;
 
 }

@@ -13,8 +13,8 @@ public interface IUsuario extends Serializable {
 
     void setNomeUsuario(String usuario);
 
-    void setRegistrado(boolean conectado);
+    void setConectado(boolean conectado);
 
-    boolean isRegistrado();
+    boolean isConectado();
 
 }
