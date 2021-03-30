@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -44,6 +45,23 @@ public abstract class ControladorChat {
                 }
 
                 @Override
+                protected void onAmigoNovo(IUsuario u) throws RemoteException {
+                    amigos.put(u.getUuid(),u);
+                    amigoNovo(u);
+                }
+
+                @Override
+                protected void onAmigoEliminado(IUsuario u) throws RemoteException {
+                    amigos.remove(u.getUuid());
+                    amigoEliminado(u);
+                }
+
+                @Override
+                protected void onSolictudeRecibda(IRelacion relacion) throws RemoteException {
+                    System.out.println("Quere ser teu amigo" + relacion.getU1());
+                }
+
+                @Override
                 protected void onUsuarioConectado(IUsuario u) throws RemoteException {
                     if (u.getUuid().equals(usuarioActual.getUuid())) return;
                     amigos.put(u.getUuid(),u);
@@ -52,6 +70,7 @@ public abstract class ControladorChat {
 
                 @Override
                 protected void onUsuarioDesconectado(IUsuario u) throws RemoteException {
+                    if(!amigos.containsKey(u.getUuid()))return;
                     amigos.put(u.getUuid(),u);
                     usuarioDesconectado(u);
                 }
@@ -93,4 +112,8 @@ public abstract class ControladorChat {
     public  abstract void usuarioConectado(IUsuario usuario);
 
     public  abstract void usuarioDesconectado(IUsuario usuario);
+
+    public  abstract void amigoNovo(IUsuario usuario);
+
+    public  abstract void amigoEliminado(IUsuario usuario);
 }

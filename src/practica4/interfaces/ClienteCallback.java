@@ -15,10 +15,15 @@ public interface ClienteCallback extends Remote {
 
     void eliminarUsuarioDisponible(IUsuario velloUsuario) throws RemoteException;
 
+    void novoAmigo(IUsuario amigo) throws RemoteException;
+
+    void eliminarAmigo(IUsuario amigo) throws RemoteException;
+
     IUsuario getUsuario() throws RemoteException;
 
     void setUsuario(IUsuario usuario) throws RemoteException;
 
     UUID getUuid() throws RemoteException;
 
+    void enviarSolicitude(IRelacion relacion) throws RemoteException;
 }

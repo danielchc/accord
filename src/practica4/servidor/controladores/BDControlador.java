@@ -110,7 +110,7 @@ public class BDControlador {
         PreparedStatement stmUsuario = null;
         ResultSet resultValidacion;
         try {
-            stmUsuario = conn.prepareStatement("SELECT 1 FROM amigos WHERE ? IN (u1,u2) AND ? IN (u1,u2)");
+            stmUsuario = conn.prepareStatement("SELECT 1 FROM amigos WHERE ? IN (u1,u2) AND ? IN (u1,u2) AND aceptado=1");
             stmUsuario.setString(1, u1.getUuid().toString());
             stmUsuario.setString(2, u2.getUuid().toString());
             resultValidacion = stmUsuario.executeQuery();
@@ -137,7 +137,7 @@ public class BDControlador {
         try {
             stmUsuario = conn.prepareStatement("SELECT *, (IFNULL((SELECT aceptado FROM amigos " +
                     "WHERE uuid IN (u1,u2) AND ? IN (u1,u2)),2)) AS relacion," +
-                    "(IFNULL((SELECT 1 FROM amigos WHERE u2=?),0)) AS toMe " +
+                    "(IFNULL((SELECT 1 FROM amigos WHERE u2=? AND u1=uuid),0)) AS toMe " +
                     "FROM usuarios Where uuid!=? AND LOWER(nomeUsuario) LIKE LOWER(?) "+filter+";");
 
             stmUsuario.setString(1, usuario.getUuid().toString());
@@ -179,12 +179,12 @@ public class BDControlador {
         return usuarios;
     }
 
-    public void crearSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) {
+    public void crearSolicitude(IRelacion relacion) {
         PreparedStatement stmSolicitude = null;
         try {
             stmSolicitude = conn.prepareStatement("INSERT INTO amigos VALUES(?,?,0);");
-            stmSolicitude.setString(1, usuarioActual.getUuid().toString());
-            stmSolicitude.setString(2, usuarioRequest.getUuid().toString());
+            stmSolicitude.setString(1, relacion.getU1().getUuid().toString());
+            stmSolicitude.setString(2, relacion.getU2().getUuid().toString());
             stmSolicitude.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

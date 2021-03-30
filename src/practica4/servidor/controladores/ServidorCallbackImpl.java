@@ -63,17 +63,24 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public void enviarSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) throws RemoteException{
-        bdControlador.crearSolicitude(usuarioActual,usuarioRequest);
+    public void enviarSolicitude(IRelacion relacion) throws RemoteException{
+        bdControlador.crearSolicitude(relacion);
+
+        if(listaClientes.containsKey(relacion.getU2().getUuid()))
+            listaClientes.get(relacion.getU2().getUuid()).enviarSolicitude(relacion);
+
     }
 
     @Override
     public void aceptarSolicitude(IRelacion item) throws RemoteException {
         bdControlador.aceptarSolicitude(item);
+        item.getU1().setConectado(listaClientes.containsKey(item.getU1().getUuid()));
+        item.getU2().setConectado(listaClientes.containsKey(item.getU2().getUuid()));
+
         if(listaClientes.containsKey(item.getU1().getUuid()))
-            listaClientes.get(item.getU1().getUuid()).rexistrarUsuarioDisponible(item.getU2());
+            listaClientes.get(item.getU1().getUuid()).novoAmigo(item.getU2());
         if(listaClientes.containsKey(item.getU2().getUuid()))
-            listaClientes.get(item.getU2().getUuid()).rexistrarUsuarioDisponible(item.getU1());
+            listaClientes.get(item.getU2().getUuid()).novoAmigo(item.getU1());
 
     }
 
@@ -86,9 +93,9 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     public void eliminarAmigo(IRelacion item) throws RemoteException{
         bdControlador.eliminarAmigo(item);
         if(listaClientes.containsKey(item.getU1().getUuid()))
-            listaClientes.get(item.getU1().getUuid()).eliminarUsuarioDisponible(item.getU2());
+            listaClientes.get(item.getU1().getUuid()).eliminarAmigo(item.getU2());
         if(listaClientes.containsKey(item.getU2().getUuid()))
-            listaClientes.get(item.getU2().getUuid()).eliminarUsuarioDisponible(item.getU1());
+            listaClientes.get(item.getU2().getUuid()).eliminarAmigo(item.getU1());
     }
 
     @Override

@@ -33,21 +33,22 @@ public abstract class oSolicitud extends AnchorPane {
         }
 
         btnAceptar.setVisible(false);
-        lblNomeUsuario.setText(u.getU2().getNomeUsuario());
+        if(u.getU1().getUuid().equals(usuarioActual.getUuid())){
+            lblNomeUsuario.setText(u.getU2().getNomeUsuario());
+        }else{
+            lblNomeUsuario.setText(u.getU1().getNomeUsuario());
+        }
 
         switch (u.getRelacion()){
-            case Amigos:
-                btnEngadir.setText("Eliminar");
-                lblRelacion.setText("Amigos");
-                break;
             case Ningunha:
                 btnEngadir.setText("Engadir");
                 lblRelacion.setText("Ningunha");
                 break;
+            case Amigos:
+                btnEngadir.setText("Eliminar");
+                lblRelacion.setText("Amigos");
+                break;
             case SolicitudePendente:
-                if(!u.getU1().getUuid().equals(usuarioActual.getUuid())){
-                    lblNomeUsuario.setText(u.getU1().getNomeUsuario());
-                }
                 btnAceptar.setVisible(!u.getU1().getUuid().equals(usuarioActual.getUuid()));
                 btnEngadir.setText("Cancelar");
                 lblRelacion.setText("Solicitude pendente");

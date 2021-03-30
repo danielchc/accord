@@ -47,6 +47,8 @@ public class vPrincipal implements Initializable {
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
+
+
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(Mensaxe m) {
@@ -73,6 +75,21 @@ public class vPrincipal implements Initializable {
                 Platform.runLater(() -> {
                     lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
                     lvListaClientes.getItems().add(u);
+                });
+            }
+
+            @Override
+            public void amigoNovo(IUsuario u) {
+                Platform.runLater(() -> {
+                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
+                    lvListaClientes.getItems().add(u);
+                });
+            }
+
+            @Override
+            public void amigoEliminado(IUsuario u) {
+                Platform.runLater(() -> {
+                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
                 });
             }
         };
