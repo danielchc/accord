@@ -1,6 +1,8 @@
 package practica4.servidor.controladores;
 
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
+import practica4.servidor.obxectos.Relacion;
 import practica4.servidor.obxectos.Usuario;
 
 import java.rmi.RemoteException;
@@ -108,11 +110,9 @@ public class BDControlador {
         PreparedStatement stmUsuario = null;
         ResultSet resultValidacion;
         try {
-            stmUsuario = conn.prepareStatement("SELECT 1 FROM amigos WHERE (u1=? OR u1=?) AND (u2=? OR u2=?)");
+            stmUsuario = conn.prepareStatement("SELECT 1 FROM amigos WHERE ? IN (u1,u2) AND ? IN (u1,u2)");
             stmUsuario.setString(1, u1.getUuid().toString());
             stmUsuario.setString(2, u2.getUuid().toString());
-            stmUsuario.setString(3, u1.getUuid().toString());
-            stmUsuario.setString(4, u2.getUuid().toString());
             resultValidacion = stmUsuario.executeQuery();
             return resultValidacion.next();
         } catch (SQLException e) {
@@ -128,15 +128,18 @@ public class BDControlador {
     }
 
 
-    public List<IUsuario> buscarUsuarios(String query, IUsuario usuario) {
-        ArrayList<IUsuario> usuarios= new ArrayList<IUsuario>();
+    public List<IRelacion> buscarUsuarios(String query, IUsuario usuario) {
+        String filter="";
+        if(query.trim().isEmpty()) filter=" AND relacion IN (0,1)";
+        ArrayList<IRelacion> usuarios= new ArrayList<IRelacion>();
         PreparedStatement stmUsuario = null;
         ResultSet resultValidacion;
         try {
-            stmUsuario = conn.prepareStatement("select * from usuarios AS u WHERE\n" +
-                    "(u.uuid NOT IN (SELECT u1 from amigos WHERE u2=?)) AND\n" +
-                    "(u.uuid NOT IN (SELECT u2 from amigos WHERE u1=?))\n" +
-                    "AND NOT u.uuid=? AND LOWER(nomeUsuario) LIKE LOWER(?);");
+            stmUsuario = conn.prepareStatement("SELECT *, (IFNULL((SELECT aceptado FROM amigos " +
+                    "WHERE uuid IN (u1,u2) AND ? IN (u1,u2)),2)) AS relacion," +
+                    "(IFNULL((SELECT 1 FROM amigos WHERE u2=?),0)) AS toMe " +
+                    "FROM usuarios Where uuid!=? AND LOWER(nomeUsuario) LIKE LOWER(?) "+filter+";");
+
             stmUsuario.setString(1, usuario.getUuid().toString());
             stmUsuario.setString(2, usuario.getUuid().toString());
             stmUsuario.setString(3, usuario.getUuid().toString());
@@ -144,10 +147,25 @@ public class BDControlador {
             resultValidacion = stmUsuario.executeQuery();
 
             while (resultValidacion.next()){
-                usuarios.add(new Usuario(
-                        UUID.fromString(resultValidacion.getString("uuid")),
-                        resultValidacion.getString("nomeUsuario")
-                ));
+                if (resultValidacion.getBoolean("toMe")){
+                    usuarios.add(new Relacion(
+                            new Usuario(
+                                    UUID.fromString(resultValidacion.getString("uuid")),
+                                    resultValidacion.getString("nomeUsuario")
+                            ),
+                            usuario,
+                            IRelacion.TipoRelacion.values()[resultValidacion.getInt("relacion")]
+                    ));
+                }else{
+                    usuarios.add(new Relacion(
+                            usuario,
+                            new Usuario(
+                                    UUID.fromString(resultValidacion.getString("uuid")),
+                                    resultValidacion.getString("nomeUsuario")
+                            ),
+                            IRelacion.TipoRelacion.values()[resultValidacion.getInt("relacion")]
+                    ));
+                }
             }
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();
@@ -162,21 +180,57 @@ public class BDControlador {
     }
 
     public void crearSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) {
-        PreparedStatement stmMensaxe = null;
+        PreparedStatement stmSolicitude = null;
         try {
-            stmMensaxe = conn.prepareStatement("INSERT INTO amigos VALUES(?,?,0);");
-            stmMensaxe.setString(1, usuarioActual.getUuid().toString());
-            stmMensaxe.setString(2, usuarioRequest.getUuid().toString());
-            stmMensaxe.executeUpdate();
-            conn.commit();
+            stmSolicitude = conn.prepareStatement("INSERT INTO amigos VALUES(?,?,0);");
+            stmSolicitude.setString(1, usuarioActual.getUuid().toString());
+            stmSolicitude.setString(2, usuarioRequest.getUuid().toString());
+            stmSolicitude.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmMensaxe != null) stmMensaxe.close();
+                if (stmSolicitude != null) stmSolicitude.close();
             } catch (SQLException e) {
                 System.out.println("Imposible pechar os cursores.");
             }
         }
     }
+
+    public void eliminarAmigo(IRelacion item) {
+        PreparedStatement stmAmigo = null;
+        try {
+            stmAmigo = conn.prepareStatement("DELETE FROM amigos WHERE ? IN (u1,u2) AND ? IN (u1,u2);");
+            stmAmigo.setString(1, item.getU1().getUuid().toString());
+            stmAmigo.setString(2, item.getU2().getUuid().toString());
+            stmAmigo.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmAmigo != null) stmAmigo.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible pechar os cursores.");
+            }
+        }
+    }
+
+    public void aceptarSolicitude(IRelacion item) {
+        PreparedStatement stmAmigo = null;
+        try {
+            stmAmigo = conn.prepareStatement("UPDATE amigos SET aceptado=1 WHERE ? IN (u1,u2) AND ? IN (u1,u2);");
+            stmAmigo.setString(1, item.getU1().getUuid().toString());
+            stmAmigo.setString(2, item.getU2().getUuid().toString());
+            stmAmigo.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmAmigo != null) stmAmigo.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible pechar os cursores.");
+            }
+        }
+    }
+
 }

@@ -164,6 +164,7 @@ public class vPrincipal implements Initializable {
         fxmlLoader.setController(new vAmigosController(servidorCallback,usuarioActual));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vAmigos/vAmigos.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
+        stage.setTitle("Amigos");
         stage.setResizable(false);
         stage.show();
     }

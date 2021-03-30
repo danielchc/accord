@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane prefHeight="498.0" prefWidth="335.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="498.0" prefWidth="335.0"  xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TextField fx:id="tfNomeUsuario" layoutX="40.0" layoutY="225.0" prefHeight="40.0" prefWidth="261.0" />
       <PasswordField fx:id="tfContrasinal" layoutX="40.0" layoutY="301.0" prefHeight="40.0" prefWidth="261.0" />

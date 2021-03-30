@@ -25,8 +25,14 @@ public interface ServidorCallback extends Remote {
 
     List<IUsuario> getAmigos(IUsuario usuario) throws RemoteException;
 
-    List<IUsuario> buscarUsuarios(String query,IUsuario usuario) throws RemoteException;
+    List<IRelacion> buscarUsuarios(String query,IUsuario usuario) throws RemoteException;
 
 
     void enviarSolicitude(IUsuario usuarioActual, IUsuario item) throws RemoteException;
+
+    void aceptarSolicitude(IRelacion item) throws RemoteException;
+
+    void cancelarSolicitude(IRelacion item) throws RemoteException;
+
+    void eliminarAmigo(IRelacion item) throws RemoteException;
 }

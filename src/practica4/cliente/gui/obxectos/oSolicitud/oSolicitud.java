@@ -5,22 +5,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.shape.Circle;
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 public abstract class oSolicitud extends AnchorPane {
     @FXML
     private Label lblNomeUsuario;
+    @FXML
+    private Label lblRelacion;
 
     @FXML
     private Button btnEngadir;
+    @FXML
+    private Button btnAceptar;
 
 
-    public oSolicitud(IUsuario u) {
+    public oSolicitud(IRelacion u, IUsuario usuarioActual) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/practica4/cliente/gui/obxectos/oSolicitud/oSolicitud.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -30,14 +32,34 @@ public abstract class oSolicitud extends AnchorPane {
             e.printStackTrace();
         }
 
-        lblNomeUsuario.setText(u.getNomeUsuario());
+        btnAceptar.setVisible(false);
+        lblNomeUsuario.setText(u.getU2().getNomeUsuario());
+
+        switch (u.getRelacion()){
+            case Amigos:
+                btnEngadir.setText("Eliminar");
+                lblRelacion.setText("Amigos");
+                break;
+            case Ningunha:
+                btnEngadir.setText("Engadir");
+                lblRelacion.setText("Ningunha");
+                break;
+            case SolicitudePendente:
+                if(!u.getU1().getUuid().equals(usuarioActual.getUuid())){
+                    lblNomeUsuario.setText(u.getU1().getNomeUsuario());
+                }
+                btnAceptar.setVisible(!u.getU1().getUuid().equals(usuarioActual.getUuid()));
+                btnEngadir.setText("Cancelar");
+                lblRelacion.setText("Solicitude pendente");
+                break;
+        }
 
     }
 
     @FXML
-    public void onClick(){
-        btnEngadir.setText("Pendiente");
-        btnEngadir.setDisable(true);
-    };
+    public abstract void onClickCancelar();
+
+    @FXML
+    public abstract void onClickAceptar();
 
 }

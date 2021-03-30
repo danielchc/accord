@@ -6,9 +6,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.gui.obxectos.oSolicitud.oSolicitud;
-import practica4.cliente.obxectos.Mensaxe;
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -21,6 +20,7 @@ public class vAmigosController implements Initializable {
     private IUsuario usuarioActual;
     @FXML
     private ListView lvBuscarUsuarios;
+
     @FXML
     private TextField tfTextoBuscar;
 
@@ -32,28 +32,65 @@ public class vAmigosController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lvBuscarUsuarios.setCellFactory(param -> new ListCell<IUsuario>() {
+        lvBuscarUsuarios.getItems().clear();
+        try {
+            lvBuscarUsuarios.getItems().addAll(servidorCallback.buscarUsuarios("",usuarioActual));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        lvBuscarUsuarios.setCellFactory(param -> new ListCell<IRelacion>() {
             @Override
-            protected void updateItem(IUsuario item, boolean empty) {
+            protected void updateItem(IRelacion item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(null);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setGraphic(new oSolicitud(item) {
+                    setGraphic(new oSolicitud(item,usuarioActual) {
                         @Override
-                        public void onClick() {
-                            super.onClick();
+                        public void onClickCancelar() {
+                            Alert alert=new Alert(Alert.AlertType.INFORMATION);
                             try {
-                                servidorCallback.enviarSolicitude(usuarioActual,item);
-                                Alert alert=new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Solicitude");
-                                alert.setContentText(String.format("Solicitude enviada a %s",item.getNomeUsuario()));
-                                alert.showAndWait();
+                                switch (item.getRelacion()){
+                                    case Ningunha:
+                                        alert.setTitle("Solicitude");
+                                        alert.setContentText(String.format("Solicitude enviada a %s",item.getU2().getNomeUsuario()));
+                                        alert.showAndWait();
+                                        servidorCallback.enviarSolicitude(usuarioActual,item.getU2());
+                                        break;
+                                    case Amigos:
+                                        alert.setTitle("Amigo eliminado");
+                                        alert.setContentText(String.format("Acabas de eliminar a %s de amigo",item.getU2().getNomeUsuario()));
+                                        alert.showAndWait();
+                                        servidorCallback.eliminarAmigo(item);
+                                        break;
+                                    case SolicitudePendente:
+                                        alert.setTitle("Solicitude cancelada");
+                                        alert.setContentText(String.format("Acabas de cancelar a solicitude a %s",item.getU2().getNomeUsuario()));
+                                        alert.showAndWait();
+                                        servidorCallback.cancelarSolicitude(item);
+                                        break;
+
+                                }
+                                tfTextoBuscar.clear();
+                                buscarUsuario();
 
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
+                        }
+
+                        @Override
+                        public void onClickAceptar() {
+                            try {
+                                servidorCallback.aceptarSolicitude(item);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            tfTextoBuscar.clear();
+                            buscarUsuario();
                         }
                     });
                 }

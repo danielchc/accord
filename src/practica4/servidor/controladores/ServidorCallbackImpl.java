@@ -1,6 +1,7 @@
 package practica4.servidor.controladores;
 
 import practica4.interfaces.ClienteCallback;
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
@@ -57,13 +58,37 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public List<IUsuario> buscarUsuarios(String query, IUsuario usuario) throws RemoteException {
+    public List<IRelacion> buscarUsuarios(String query, IUsuario usuario) throws RemoteException {
         return bdControlador.buscarUsuarios(query,usuario);
     }
 
     @Override
     public void enviarSolicitude(IUsuario usuarioActual, IUsuario usuarioRequest) throws RemoteException{
         bdControlador.crearSolicitude(usuarioActual,usuarioRequest);
+    }
+
+    @Override
+    public void aceptarSolicitude(IRelacion item) throws RemoteException {
+        bdControlador.aceptarSolicitude(item);
+        if(listaClientes.containsKey(item.getU1().getUuid()))
+            listaClientes.get(item.getU1().getUuid()).rexistrarUsuarioDisponible(item.getU2());
+        if(listaClientes.containsKey(item.getU2().getUuid()))
+            listaClientes.get(item.getU2().getUuid()).rexistrarUsuarioDisponible(item.getU1());
+
+    }
+
+    @Override
+    public void cancelarSolicitude(IRelacion item) {
+        bdControlador.eliminarAmigo(item);
+    }
+
+    @Override
+    public void eliminarAmigo(IRelacion item) throws RemoteException{
+        bdControlador.eliminarAmigo(item);
+        if(listaClientes.containsKey(item.getU1().getUuid()))
+            listaClientes.get(item.getU1().getUuid()).eliminarUsuarioDisponible(item.getU2());
+        if(listaClientes.containsKey(item.getU2().getUuid()))
+            listaClientes.get(item.getU2().getUuid()).eliminarUsuarioDisponible(item.getU1());
     }
 
     @Override
