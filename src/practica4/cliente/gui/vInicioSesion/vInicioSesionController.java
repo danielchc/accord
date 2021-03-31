@@ -25,11 +25,14 @@ import java.util.ResourceBundle;
 public class vInicioSesionController implements Initializable {
     private final ServidorCallback servidorCallback;
     private final Stage stage;
-    private IUsuario usuario;
     private final FXMLLoader fxmlLoader;
-
+    private boolean registro;
     @FXML
     private TextField tfNomeUsuario;
+    @FXML
+    private Button btnToogleRegistro;
+    @FXML
+    private Button btnAccion;
     @FXML
     private TextField tfContrasinal;
     @FXML
@@ -41,14 +44,42 @@ public class vInicioSesionController implements Initializable {
         this.fxmlLoader = new FXMLLoader();
         this.stage = new Stage();
     }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        registro=false;
+        //BORRAR ESTOOOOOOOOOOOOOOO
+        tfContrasinal.setText("abc123..");
+    }
+
 
     @FXML
-    private void iniciarSesionClick(ActionEvent event) throws Exception {
+    private void accionClick(ActionEvent event) throws Exception {
         String u = tfNomeUsuario.getText();
         String p = tfContrasinal.getText();
         if (p.length() == 0 || u.length() == 0) return;
+        if(registro){
+            registroClick(u,p,event);
+        }else{
+            iniciarClick(u,p,event);
+        }
+    }
 
 
+    @FXML
+    private void btnToogleOnClick(){
+        if(!registro){
+            btnToogleRegistro.setText("Iniciar");
+            btnAccion.setText("Rexistrarse");
+        }else{
+            btnToogleRegistro.setText("Rexistrarse");
+            btnAccion.setText("Iniciar");
+        }
+        registro=!registro;
+        tfNomeUsuario.clear();
+        tfContrasinal.clear();
+    }
+
+    private void iniciarClick(String u, String p, ActionEvent event) throws IOException {
         if (!servidorCallback.comprobarUsuario(u, p)) {
             lblContrasinalIncorrecto.setVisible(true);
             System.out.println("Contraseña incorrecta");
@@ -58,31 +89,43 @@ public class vInicioSesionController implements Initializable {
         if (servidorCallback.tenIniciadoSesion(u)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Sesión iniciada");
-            alert.setHeaderText("Este usuario xa ten inciada sesión");
+            alert.setHeaderText("Este usuario xa ten iniciada sesión");
             alert.setContentText("Xa existe unha instancia de este usuario iniciada");
             alert.showAndWait();
             return;
         }
 
-        iniciarSesion(u);
+        iniciarSesion(servidorCallback.getUsuario(u));
+        ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
+    }
 
+    private void registroClick(String u, String p, ActionEvent event) throws IOException {
+        if (servidorCallback.comprobarUsuarioExiste(u)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error no rexistro");
+            alert.setHeaderText("O nome de usuario está en uso");
+            alert.setContentText(String.format("Xa existe un usuario que se chama %s",u));
+            alert.showAndWait();
+            return;
+        }
+        IUsuario usuario=servidorCallback.rexistrarUsuario(u,p);
+        iniciarSesion(usuario);
         ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
     }
 
 
-    private void iniciarSesion(String u) throws IOException {
-        usuario = servidorCallback.getUsuario(u);
+    private void iniciarSesion(IUsuario usuario) throws IOException {
         fxmlLoader.setController(new vPrincipal(servidorCallback, usuario));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vPrincipal/vPrincipal.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
-        stage.setTitle("Accord: " + u);
+        stage.setTitle("Accord: " + usuario.getNomeUsuario());
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
                 try {
                     if (usuario != null && usuario.isConectado()) {
                         usuario.setConectado(false);
-                        servidorCallback.desRegistrarCliente(usuario.getUuid());
+                        servidorCallback.desRexistrarCliente(usuario.getUuid());
                     }
                 } catch (RemoteException e) {
                     System.out.println(e);
@@ -96,10 +139,5 @@ public class vInicioSesionController implements Initializable {
     }
 
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
 
-        //BORRAR ESTOOOOOOOOOOOOOOO
-        tfContrasinal.setText("abc123..");
-    }
 }

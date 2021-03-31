@@ -26,8 +26,24 @@ public class BDControlador {
         }
     }
 
-    public void rexistrarUsuario() {
-
+    public boolean comprobarUsuarioExiste(String nomeUsuario) {
+        PreparedStatement stmUsuario = null;
+        ResultSet resultValidacion;
+        try {
+            stmUsuario = conn.prepareStatement("SELECT * FROM usuarios WHERE LOWER(nomeUsuario)=LOWER(?);");
+            stmUsuario.setString(1, nomeUsuario);
+            resultValidacion = stmUsuario.executeQuery();
+            return resultValidacion.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                stmUsuario.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible cerrar cursores");
+            }
+        }
+        return false;
     }
 
     public boolean comprobarUsuario(String nomeUsuario, String contrasinal) {
@@ -49,6 +65,29 @@ public class BDControlador {
             }
         }
         return false;
+    }
+
+    public IUsuario rexistrarUsuario(String nomeUsuario, String p) throws RemoteException {
+        PreparedStatement stmSolicitude = null;
+        Usuario usuario=new Usuario(UUID.randomUUID(),nomeUsuario);
+        try {
+
+            stmSolicitude = conn.prepareStatement("INSERT INTO usuarios VALUES(?,?,?);");
+            stmSolicitude.setString(1, usuario.getUuid().toString());
+            stmSolicitude.setString(2, usuario.getNomeUsuario());
+            stmSolicitude.setString(3, p);
+            stmSolicitude.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (stmSolicitude != null) stmSolicitude.close();
+            } catch (SQLException e) {
+                System.out.println("Imposible pechar os cursores.");
+            }
+        }
+        return usuario;
     }
 
     public IUsuario getUsuario(String nomeUsuario) {
@@ -126,7 +165,6 @@ public class BDControlador {
         }
         return false;
     }
-
 
     public List<IRelacion> buscarUsuarios(String query, IUsuario usuario) {
         String filter="";
@@ -226,5 +264,6 @@ public class BDControlador {
             }
         }
     }
+
 
 }

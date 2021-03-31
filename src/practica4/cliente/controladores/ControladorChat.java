@@ -77,7 +77,7 @@ public abstract class ControladorChat {
             };
             amigos = servidorCallback.getAmigos(usuarioActual).stream().collect(Collectors.toMap(IUsuario::getUuid, Function.identity()));
             usuarioActual.setConectado(true);
-            servidorCallback.registrarCliente(clienteCallback);
+            servidorCallback.rexistrarCliente(clienteCallback);
 
             rexistroCorrecto(amigos);
 

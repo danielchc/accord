@@ -13,9 +13,9 @@ public interface ServidorCallback extends Remote {
 
     List<IUsuario> getListaUsuarios() throws RemoteException;
 
-    void registrarCliente(ClienteCallback obj) throws RemoteException;
+    void rexistrarCliente(ClienteCallback obj) throws RemoteException;
 
-    void desRegistrarCliente(UUID uuid) throws RemoteException;
+    void desRexistrarCliente(UUID uuid) throws RemoteException;
 
     ClienteCallback getCliente(UUID uuid) throws RemoteException;
 
@@ -35,4 +35,8 @@ public interface ServidorCallback extends Remote {
     void cancelarSolicitude(IRelacion item) throws RemoteException;
 
     void eliminarAmigo(IRelacion item) throws RemoteException;
+
+    boolean comprobarUsuarioExiste(String u) throws RemoteException;
+
+    IUsuario rexistrarUsuario(String u, String p) throws RemoteException;
 }

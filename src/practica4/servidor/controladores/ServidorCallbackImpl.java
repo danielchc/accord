@@ -25,14 +25,14 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
 
     @Override
-    public void registrarCliente(ClienteCallback novoCliente) throws RemoteException{
+    public void rexistrarCliente(ClienteCallback novoCliente) throws RemoteException{
         System.out.println("Conectado novo cliente " + novoCliente.getUuid());
         listaClientes.put(novoCliente.getUsuario().getUuid(),novoCliente);
         notificarClientesConexion(novoCliente);
     }
 
     @Override
-    public void desRegistrarCliente(UUID velloClienteUUID) throws RemoteException{
+    public void desRexistrarCliente(UUID velloClienteUUID) throws RemoteException{
         System.out.println("Cliente desconectado " + velloClienteUUID);
         notificarClientesDesconexion(listaClientes.get(velloClienteUUID));
         listaClientes.remove(velloClienteUUID);
@@ -100,6 +100,16 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
             listaClientes.get(item.getU1().getUuid()).eliminarAmigo(item.getU2());
         if(listaClientes.containsKey(item.getU2().getUuid()))
             listaClientes.get(item.getU2().getUuid()).eliminarAmigo(item.getU1());
+    }
+
+    @Override
+    public boolean comprobarUsuarioExiste(String u) throws RemoteException {
+        return bdControlador.comprobarUsuarioExiste(u);
+    }
+
+    @Override
+    public IUsuario rexistrarUsuario(String u, String p) throws RemoteException {
+        return bdControlador.rexistrarUsuario(u,p);
     }
 
     @Override
