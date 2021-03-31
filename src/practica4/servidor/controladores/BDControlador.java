@@ -147,25 +147,19 @@ public class BDControlador {
             resultValidacion = stmUsuario.executeQuery();
 
             while (resultValidacion.next()){
-                if (resultValidacion.getBoolean("toMe")){
-                    usuarios.add(new Relacion(
-                            new Usuario(
-                                    UUID.fromString(resultValidacion.getString("uuid")),
-                                    resultValidacion.getString("nomeUsuario")
-                            ),
-                            usuario,
-                            IRelacion.TipoRelacion.values()[resultValidacion.getInt("relacion")]
-                    ));
-                }else{
-                    usuarios.add(new Relacion(
-                            usuario,
-                            new Usuario(
-                                    UUID.fromString(resultValidacion.getString("uuid")),
-                                    resultValidacion.getString("nomeUsuario")
-                            ),
-                            IRelacion.TipoRelacion.values()[resultValidacion.getInt("relacion")]
-                    ));
-                }
+
+                int code=resultValidacion.getInt("relacion");
+                if(!resultValidacion.getBoolean("toMe") && code==0)code=3;
+
+                usuarios.add(new Relacion(
+                        usuario,
+                        new Usuario(
+                            UUID.fromString(resultValidacion.getString("uuid")),
+                            resultValidacion.getString("nomeUsuario")
+                        ),
+                        IRelacion.TipoRelacion.values()[code]
+                ));
+
             }
         } catch (SQLException | RemoteException e) {
             e.printStackTrace();

@@ -85,8 +85,12 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public void cancelarSolicitude(IRelacion item) {
+    public void cancelarSolicitude(IRelacion item) throws RemoteException{
         bdControlador.eliminarAmigo(item);
+        if(listaClientes.containsKey(item.getU1().getUuid()))
+            listaClientes.get(item.getU1().getUuid()).eliminarAmigo(item.getU2());
+        if(listaClientes.containsKey(item.getU2().getUuid()))
+            listaClientes.get(item.getU2().getUuid()).eliminarAmigo(item.getU1());
     }
 
     @Override

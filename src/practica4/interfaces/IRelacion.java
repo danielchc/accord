@@ -6,7 +6,8 @@ public interface IRelacion extends Serializable {
     enum TipoRelacion{
         SolicitudePendente,
         Amigos,
-        Ningunha
+        Ningunha,
+        SolicitudeEnviada
     }
 
     IUsuario getU1();

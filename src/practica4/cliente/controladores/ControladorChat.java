@@ -57,8 +57,8 @@ public abstract class ControladorChat {
                 }
 
                 @Override
-                protected void onSolictudeRecibda(IRelacion relacion) throws RemoteException {
-                    System.out.println("Quere ser teu amigo" + relacion.getU1());
+                protected void onSolicitudeRecibida(IRelacion relacion) throws RemoteException {
+                    solicitudeRecibida(relacion);
                 }
 
                 @Override
@@ -116,4 +116,6 @@ public abstract class ControladorChat {
     public  abstract void amigoNovo(IUsuario usuario);
 
     public  abstract void amigoEliminado(IUsuario usuario);
+
+    public  abstract void solicitudeRecibida(IRelacion relacion);
 }

@@ -3,7 +3,6 @@ package practica4.cliente.gui.vPrincipal;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,15 +12,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import practica4.cliente.controladores.ControladorChat;
 import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.gui.obxectos.oUsuario.oUsuario;
 import practica4.cliente.gui.vAmigos.vAmigosController;
 import practica4.cliente.obxectos.Mensaxe;
+import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -32,6 +34,7 @@ public class vPrincipal implements Initializable {
     private ControladorChat controladorChat;
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
+    private vAmigosController amigosController;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -42,12 +45,12 @@ public class vPrincipal implements Initializable {
     @FXML
     private Button btnAmigos;
 
-    private ObservableList<IUsuario> amigos;
+    private TrayIcon trayIcon;
 
     public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
-
+        this.amigosController=new vAmigosController(servidorCallback,usuarioActual);
 
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
@@ -84,6 +87,7 @@ public class vPrincipal implements Initializable {
                     lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
                     lvListaClientes.getItems().add(u);
                 });
+                amigosController.actualizarRelacion();
             }
 
             @Override
@@ -91,6 +95,12 @@ public class vPrincipal implements Initializable {
                 Platform.runLater(() -> {
                     lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
                 });
+                amigosController.actualizarRelacion();
+            }
+
+            @Override
+            public void solicitudeRecibida(IRelacion relacion) {
+                amigosController.actualizarRelacion();
             }
         };
     }
@@ -128,7 +138,6 @@ public class vPrincipal implements Initializable {
                 }
             }
         });
-        btnAmigos.setText("Amigos (1)");
     }
 
     private void cargarMensaxeInterfaz(Mensaxe m) {
@@ -178,12 +187,12 @@ public class vPrincipal implements Initializable {
     private void engadirAmigos() throws IOException {
         Stage stage=new Stage();
         FXMLLoader fxmlLoader=new FXMLLoader();
-        fxmlLoader.setController(new vAmigosController(servidorCallback,usuarioActual));
+        fxmlLoader.setController(amigosController);
+        stage.initModality(Modality.APPLICATION_MODAL);
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vAmigos/vAmigos.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
         stage.setTitle("Amigos");
         stage.setResizable(false);
         stage.show();
     }
-
 }

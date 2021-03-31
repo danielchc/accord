@@ -22,7 +22,7 @@ public abstract class oSolicitud extends AnchorPane {
     private Button btnAceptar;
 
 
-    public oSolicitud(IRelacion u, IUsuario usuarioActual) {
+    public oSolicitud(IRelacion u) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/practica4/cliente/gui/obxectos/oSolicitud/oSolicitud.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
@@ -33,11 +33,9 @@ public abstract class oSolicitud extends AnchorPane {
         }
 
         btnAceptar.setVisible(false);
-        if(u.getU1().getUuid().equals(usuarioActual.getUuid())){
-            lblNomeUsuario.setText(u.getU2().getNomeUsuario());
-        }else{
-            lblNomeUsuario.setText(u.getU1().getNomeUsuario());
-        }
+
+        lblNomeUsuario.setText(u.getU2().getNomeUsuario());
+
 
         switch (u.getRelacion()){
             case Ningunha:
@@ -49,10 +47,13 @@ public abstract class oSolicitud extends AnchorPane {
                 lblRelacion.setText("Amigos");
                 break;
             case SolicitudePendente:
-                btnAceptar.setVisible(!u.getU1().getUuid().equals(usuarioActual.getUuid()));
+                btnAceptar.setVisible(true);
+                btnEngadir.setText("Cancelar");
+                lblRelacion.setText("Solicitude pendente aceptar");
+                break;
+            case SolicitudeEnviada:
                 btnEngadir.setText("Cancelar");
                 lblRelacion.setText("Solicitude pendente");
-                break;
         }
 
     }

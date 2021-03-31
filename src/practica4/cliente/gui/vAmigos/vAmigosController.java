@@ -1,5 +1,6 @@
 package practica4.cliente.gui.vAmigos;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -18,8 +19,9 @@ import java.util.ResourceBundle;
 public class vAmigosController implements Initializable {
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
+    private boolean isInitialized=false;
     @FXML
-    private ListView lvBuscarUsuarios;
+    private ListView lvUsuarios;
 
     @FXML
     private TextField tfTextoBuscar;
@@ -32,15 +34,16 @@ public class vAmigosController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lvBuscarUsuarios.getItems().clear();
+        isInitialized=true;
+        lvUsuarios.getItems().clear();
         try {
-            lvBuscarUsuarios.getItems().addAll(servidorCallback.buscarUsuarios("",usuarioActual));
+            lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios("",usuarioActual));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
 
-        lvBuscarUsuarios.setCellFactory(param -> new ListCell<IRelacion>() {
+        lvUsuarios.setCellFactory(param -> new ListCell<IRelacion>() {
             @Override
             protected void updateItem(IRelacion item, boolean empty) {
                 super.updateItem(item, empty);
@@ -48,10 +51,10 @@ public class vAmigosController implements Initializable {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setGraphic(new oSolicitud(item,usuarioActual) {
+                    setGraphic(new oSolicitud(item) {
                         @Override
                         public void onClickCancelar() {
-                            String usuario=item.getU1().getUuid().equals(usuarioActual.getUuid())?item.getU2().getNomeUsuario():item.getU2().getNomeUsuario();
+                            String usuario=item.getU2().getNomeUsuario();
                             Alert alert=new Alert(Alert.AlertType.INFORMATION);
                             try {
                                 switch (item.getRelacion()){
@@ -67,6 +70,7 @@ public class vAmigosController implements Initializable {
                                         alert.showAndWait();
                                         servidorCallback.eliminarAmigo(item);
                                         break;
+                                    case SolicitudeEnviada:
                                     case SolicitudePendente:
                                         alert.setTitle("Solicitude cancelada");
                                         alert.setContentText(String.format("Acabas de cancelar a solicitude a %s",usuario));
@@ -100,11 +104,19 @@ public class vAmigosController implements Initializable {
     }
     @FXML
     private void buscarUsuario(){
-        try {
-            lvBuscarUsuarios.getItems().clear();
-            lvBuscarUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(tfTextoBuscar.getText(),usuarioActual));
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        Platform.runLater(()->{
+            try {
+                lvUsuarios.getItems().clear();
+                lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(tfTextoBuscar.getText(),usuarioActual));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    public void actualizarRelacion() {
+        if(!isInitialized)return;
+        buscarUsuario();
     }
 }

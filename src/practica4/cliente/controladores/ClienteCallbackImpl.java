@@ -61,7 +61,7 @@ public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implement
 
    @Override
    public void enviarSolicitude(IRelacion relacion) throws RemoteException {
-      onSolictudeRecibda(relacion);
+      onSolicitudeRecibida(relacion);
    }
 
 
@@ -75,7 +75,7 @@ public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implement
 
    protected abstract void onAmigoEliminado(IUsuario usuario) throws RemoteException;
 
-   protected abstract void onSolictudeRecibda(IRelacion relacion) throws RemoteException;
+   protected abstract void onSolicitudeRecibida(IRelacion relacion) throws RemoteException;
 
 
 }
