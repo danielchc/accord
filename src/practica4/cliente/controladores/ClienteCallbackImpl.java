@@ -13,12 +13,10 @@ import java.util.UUID;
 public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteCallback{
 
    private IUsuario usuario;
-   private UUID authToken;
 
-   public ClienteCallbackImpl(UUID authToken,IUsuario usuario) throws RemoteException {
+   public ClienteCallbackImpl(IUsuario usuario) throws RemoteException {
       super();
       this.usuario=usuario;
-      this.authToken =authToken;
    }
 
    @Override
@@ -64,16 +62,6 @@ public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements
    @Override
    public void enviarSolicitude(IRelacion relacion) throws RemoteException {
       onSolicitudeRecibida(relacion);
-   }
-
-   @Override
-   public UUID getAuthToken() throws RemoteException {
-      return authToken;
-   }
-
-   @Override
-   public void setAuthToken(UUID authToken) throws RemoteException {
-      this.authToken = authToken;
    }
 
 

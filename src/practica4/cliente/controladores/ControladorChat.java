@@ -35,7 +35,7 @@ public abstract class ControladorChat {
 
     public void rexistrarCliente() {
         try {
-            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(authToken,usuarioActual) {
+            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(usuarioActual) {
                 @Override
                 public void onMensaxeRecibido(IMensaxe mensaxe) {
                     comprobarChat(mensaxe.getDe());
