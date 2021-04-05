@@ -74,16 +74,22 @@ public class vPrincipal implements Initializable {
             @Override
             public void usuarioConectado(IUsuario u) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
-                    lvListaClientes.getItems().add(u);
+                    Optional<IUsuario> uv= (Optional<IUsuario>) lvListaClientes.getItems().stream().filter(k->((IUsuario)k).getUuid().equals(u.getUuid())).findFirst();
+                    if(uv.isPresent()){
+                        uv.get().setConectado(true);
+                        lvListaClientes.refresh();
+                    }
                 });
             }
 
             @Override
             public void usuarioDesconectado(IUsuario u) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
-                    lvListaClientes.getItems().add(u);
+                    Optional<IUsuario> uv= (Optional<IUsuario>) lvListaClientes.getItems().stream().filter(k->((IUsuario)k).getUuid().equals(u.getUuid())).findFirst();
+                    if(uv.isPresent()){
+                        uv.get().setConectado(false);
+                        lvListaClientes.refresh();
+                    }
                 });
             }
 
