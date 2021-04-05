@@ -1,6 +1,5 @@
 package practica4.cliente.controladores;
 
-import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
 import practica4.interfaces.IMensaxe;
 import practica4.interfaces.IRelacion;
@@ -11,13 +10,15 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.UUID;
 
 
-public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteCallback{
+public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements ClienteCallback{
 
    private IUsuario usuario;
+   private UUID authToken;
 
-   public ClienteCallbackImpl(IUsuario usuario) throws RemoteException {
+   public ClienteCallbackImpl(UUID authToken,IUsuario usuario) throws RemoteException {
       super();
       this.usuario=usuario;
+      this.authToken =authToken;
    }
 
    @Override
@@ -63,6 +64,16 @@ public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implement
    @Override
    public void enviarSolicitude(IRelacion relacion) throws RemoteException {
       onSolicitudeRecibida(relacion);
+   }
+
+   @Override
+   public UUID getAuthToken() throws RemoteException {
+      return authToken;
+   }
+
+   @Override
+   public void setAuthToken(UUID authToken) throws RemoteException {
+      this.authToken = authToken;
    }
 
 

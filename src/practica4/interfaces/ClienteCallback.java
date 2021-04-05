@@ -25,4 +25,8 @@ public interface ClienteCallback extends Remote {
     UUID getUuid() throws RemoteException;
 
     void enviarSolicitude(IRelacion relacion) throws RemoteException;
+
+    UUID getAuthToken() throws RemoteException;
+
+    void setAuthToken(UUID authToken) throws RemoteException;
 }

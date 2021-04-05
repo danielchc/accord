@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -38,6 +39,7 @@ public class vPrincipal implements Initializable {
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
     private vAmigosController amigosController;
+    private UUID authToken;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -50,12 +52,13 @@ public class vPrincipal implements Initializable {
 
     private TrayIcon trayIcon;
 
-    public vPrincipal(ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
+    public vPrincipal(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
-        this.amigosController=new vAmigosController(servidorCallback,usuarioActual);
+        this.amigosController=new vAmigosController(authToken,servidorCallback,usuarioActual);
+        this.authToken=authToken;
 
-        this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
+        this.controladorChat = new ControladorChat(vPrincipal.this.authToken,usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(IMensaxe m) {
                 cargarMensaxeInterfaz(m);
@@ -155,14 +158,22 @@ public class vPrincipal implements Initializable {
     }
 
     private void cargarTodosMensaxesIntefaz() {
+
+
         Platform.runLater(() -> {
+            mensaxeEnviar.setDisable(false);
+            lvMensaxes.setPlaceholder(new Label("Non tes mensaxes con este usuario"));
+
             lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
-        });
-        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
-        IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-        Platform.runLater(() -> {
+            if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
+            IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
+
             if (controladorChat.existeChat(u.getUuid()))
                 lvMensaxes.getItems().addAll(controladorChat.getChat(u.getUuid()).getMensaxes());
+            if(!u.isConectado()){
+                lvMensaxes.setPlaceholder(new Label("O usuario non está conectado"));
+                mensaxeEnviar.setDisable(true);
+            }
         });
     }
 

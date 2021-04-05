@@ -15,11 +15,13 @@ import practica4.interfaces.ServidorCallback;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class vAmigosController implements Initializable {
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
     private boolean isInitialized=false;
+    private UUID authToken;
     @FXML
     private ListView lvUsuarios;
 
@@ -27,9 +29,10 @@ public class vAmigosController implements Initializable {
     private TextField tfTextoBuscar;
 
 
-    public vAmigosController(ServidorCallback servidorCallback,IUsuario usuarioActual) {
+    public vAmigosController(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) {
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
+        this.authToken=authToken;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class vAmigosController implements Initializable {
         isInitialized=true;
         lvUsuarios.getItems().clear();
         try {
-            lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios("",usuarioActual));
+            lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(authToken,"",usuarioActual));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -62,20 +65,20 @@ public class vAmigosController implements Initializable {
                                         alert.setTitle("Solicitude");
                                         alert.setContentText(String.format("Solicitude enviada a %s",usuario));
                                         alert.showAndWait();
-                                        servidorCallback.enviarSolicitude(item);
+                                        servidorCallback.enviarSolicitude(authToken,item);
                                         break;
                                     case Amigos:
                                         alert.setTitle("Amigo eliminado");
                                         alert.setContentText(String.format("Acabas de eliminar a %s de amigo",usuario));
                                         alert.showAndWait();
-                                        servidorCallback.eliminarAmigo(item);
+                                        servidorCallback.eliminarAmigo(authToken,item);
                                         break;
                                     case SolicitudeEnviada:
                                     case SolicitudePendente:
                                         alert.setTitle("Solicitude cancelada");
                                         alert.setContentText(String.format("Acabas de cancelar a solicitude a %s",usuario));
                                         alert.showAndWait();
-                                        servidorCallback.cancelarSolicitude(item);
+                                        servidorCallback.cancelarSolicitude(authToken,item);
                                         break;
 
                                 }
@@ -90,7 +93,7 @@ public class vAmigosController implements Initializable {
                         @Override
                         public void onClickAceptar() {
                             try {
-                                servidorCallback.aceptarSolicitude(item);
+                                servidorCallback.aceptarSolicitude(authToken,item);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -107,7 +110,7 @@ public class vAmigosController implements Initializable {
         Platform.runLater(()->{
             try {
                 lvUsuarios.getItems().clear();
-                lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(tfTextoBuscar.getText(),usuarioActual));
+                lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(authToken,tfTextoBuscar.getText(),usuarioActual));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

@@ -16,13 +16,15 @@ public abstract class ControladorChat {
     private final ServidorCallback servidorCallback;
     private final HashMap<UUID, Chat> chats;
     private Map<UUID, IUsuario> amigos;
+    private UUID authToken;
 
 
-    public ControladorChat(IUsuario usuarioActual, ServidorCallback servidorCallback) {
+    public ControladorChat(UUID authToken,IUsuario usuarioActual, ServidorCallback servidorCallback) {
         this.servidorCallback = servidorCallback;
         this.chats = new HashMap<UUID, Chat>();
         this.usuarioActual = usuarioActual;
         this.amigos = new HashMap<UUID, IUsuario>();
+        this.authToken=authToken;
     }
 
 
@@ -33,7 +35,7 @@ public abstract class ControladorChat {
 
     public void rexistrarCliente() {
         try {
-            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(usuarioActual) {
+            ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(authToken,usuarioActual) {
                 @Override
                 public void onMensaxeRecibido(IMensaxe mensaxe) {
                     comprobarChat(mensaxe.getDe());
@@ -72,8 +74,8 @@ public abstract class ControladorChat {
                     usuarioDesconectado(u);
                 }
             };
-            amigos = servidorCallback.getAmigos(usuarioActual).stream().collect(Collectors.toMap(IUsuario::getUuid, Function.identity()));
             usuarioActual.setConectado(true);
+            amigos = servidorCallback.getAmigos(authToken,usuarioActual).stream().collect(Collectors.toMap(IUsuario::getUuid, Function.identity()));
             servidorCallback.rexistrarCliente(clienteCallback);
 
             rexistroCorrecto(amigos);
@@ -86,7 +88,7 @@ public abstract class ControladorChat {
 
     public Mensaxe enviarMensaxe(IUsuario para, String mensaxe) throws RemoteException {
         if(!para.isConectado()) return null;
-        ClienteCallback cl = servidorCallback.getCliente(para.getUuid());
+        ClienteCallback cl = servidorCallback.getCliente(authToken,para.getUuid());
         comprobarChat(para);
         Mensaxe m = new Mensaxe(usuarioActual, para, mensaxe);
         cl.enviarMensaxe(m);

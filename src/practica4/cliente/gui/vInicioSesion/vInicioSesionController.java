@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class vInicioSesionController implements Initializable {
     private final ServidorCallback servidorCallback;
     private final Stage stage;
     private final FXMLLoader fxmlLoader;
     private boolean registro;
+    private UUID authToken;
     @FXML
     private TextField tfNomeUsuario;
     @FXML
@@ -80,7 +82,8 @@ public class vInicioSesionController implements Initializable {
     }
 
     private void iniciarClick(String u, String p, ActionEvent event) throws IOException {
-        if (!servidorCallback.comprobarUsuario(u, p)) {
+        authToken=servidorCallback.comprobarUsuario(u, p);
+        if (authToken==null) {
             lblContrasinalIncorrecto.setVisible(true);
             System.out.println("Contraseña incorrecta");
             return;
@@ -115,7 +118,7 @@ public class vInicioSesionController implements Initializable {
 
 
     private void iniciarSesion(IUsuario usuario) throws IOException {
-        fxmlLoader.setController(new vPrincipal(servidorCallback, usuario));
+        fxmlLoader.setController(new vPrincipal(authToken,servidorCallback, usuario));
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vPrincipal/vPrincipal.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
         stage.setTitle("Accord: " + usuario.getNomeUsuario());
@@ -125,7 +128,7 @@ public class vInicioSesionController implements Initializable {
                 try {
                     if (usuario != null && usuario.isConectado()) {
                         usuario.setConectado(false);
-                        servidorCallback.desRexistrarCliente(usuario.getUuid());
+                        servidorCallback.desRexistrarCliente(authToken,usuario.getUuid());
                     }
                 } catch (RemoteException e) {
                     System.out.println(e);
