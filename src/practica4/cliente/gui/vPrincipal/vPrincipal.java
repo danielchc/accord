@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import practica4.cliente.controladores.ControladorChat;
@@ -195,5 +197,10 @@ public class vPrincipal implements Initializable {
         stage.setTitle("Amigos");
         stage.setResizable(false);
         stage.show();
+    }
+    @FXML
+    private void onKeyEnviarMensaxe(KeyEvent e){
+        if(e.getCode().equals(KeyCode.ENTER))
+            enviarMensaxeClick();
     }
 }
