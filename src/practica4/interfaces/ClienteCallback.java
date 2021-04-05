@@ -1,6 +1,5 @@
 package practica4.interfaces;
 
-import practica4.cliente.obxectos.Mensaxe;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -9,7 +8,7 @@ import java.util.UUID;
 
 public interface ClienteCallback extends Remote {
 
-    void enviarMensaxe(Mensaxe message) throws RemoteException;
+    void enviarMensaxe(IMensaxe message) throws RemoteException;
 
     void rexistrarUsuarioDisponible(IUsuario novoCliente) throws RemoteException;
 

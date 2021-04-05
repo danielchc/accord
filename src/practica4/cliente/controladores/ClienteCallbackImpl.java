@@ -2,6 +2,7 @@ package practica4.cliente.controladores;
 
 import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.ClienteCallback;
+import practica4.interfaces.IMensaxe;
 import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 
@@ -20,7 +21,7 @@ public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implement
    }
 
    @Override
-   public void enviarMensaxe(Mensaxe mensaxe) throws RemoteException {
+   public void enviarMensaxe(IMensaxe mensaxe) throws RemoteException {
      onMensaxeRecibido(mensaxe);
    }
 
@@ -69,7 +70,7 @@ public  abstract class ClienteCallbackImpl extends UnicastRemoteObject implement
 
    protected abstract void onUsuarioDesconectado(IUsuario usuario) throws RemoteException;
 
-   protected abstract void onMensaxeRecibido(Mensaxe mensaxe) throws RemoteException;
+   protected abstract void onMensaxeRecibido(IMensaxe mensaxe) throws RemoteException;
 
    protected abstract void onAmigoNovo(IUsuario usuario) throws RemoteException;
 

@@ -19,6 +19,7 @@ import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.gui.obxectos.oUsuario.oUsuario;
 import practica4.cliente.gui.vAmigos.vAmigosController;
 import practica4.cliente.obxectos.Mensaxe;
+import practica4.interfaces.IMensaxe;
 import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
 import practica4.interfaces.ServidorCallback;
@@ -54,7 +55,7 @@ public class vPrincipal implements Initializable {
 
         this.controladorChat = new ControladorChat(usuarioActual, servidorCallback) {
             @Override
-            public void mensaxeRecibido(Mensaxe m) {
+            public void mensaxeRecibido(IMensaxe m) {
                 cargarMensaxeInterfaz(m);
             }
 
@@ -140,7 +141,7 @@ public class vPrincipal implements Initializable {
         });
     }
 
-    private void cargarMensaxeInterfaz(Mensaxe m) {
+    private void cargarMensaxeInterfaz(IMensaxe m) {
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
 
         IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);

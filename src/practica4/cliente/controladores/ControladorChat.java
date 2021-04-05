@@ -3,10 +3,7 @@ package practica4.cliente.controladores;
 import javafx.application.Platform;
 import practica4.cliente.obxectos.Chat;
 import practica4.cliente.obxectos.Mensaxe;
-import practica4.interfaces.ClienteCallback;
-import practica4.interfaces.IRelacion;
-import practica4.interfaces.IUsuario;
-import practica4.interfaces.ServidorCallback;
+import practica4.interfaces.*;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -38,7 +35,7 @@ public abstract class ControladorChat {
         try {
             ClienteCallbackImpl clienteCallback = new ClienteCallbackImpl(usuarioActual) {
                 @Override
-                public void onMensaxeRecibido(Mensaxe mensaxe) {
+                public void onMensaxeRecibido(IMensaxe mensaxe) {
                     comprobarChat(mensaxe.getDe());
                     chats.get(mensaxe.getDe().getUuid()).engadirMensaxe(mensaxe);
                     mensaxeRecibido(mensaxe);
@@ -105,7 +102,7 @@ public abstract class ControladorChat {
         return chats.get(uuid);
     }
 
-    public abstract void mensaxeRecibido(Mensaxe m);
+    public abstract void mensaxeRecibido(IMensaxe m);
 
     public abstract void rexistroCorrecto(Map<UUID,IUsuario> amigos);
 
