@@ -171,9 +171,10 @@ public class vPrincipal implements Initializable {
             lvMensaxes.setPlaceholder(new Label("Non tes mensaxes con este usuario"));
 
             lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
+
+
             if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
             IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-
             if (controladorChat.existeChat(u.getUuid()))
                 lvMensaxes.getItems().addAll(controladorChat.getChat(u.getUuid()).getMensaxes());
             if(!u.isConectado()){

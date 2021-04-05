@@ -6,7 +6,9 @@ import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.*;
 
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,15 +18,15 @@ public abstract class ControladorChat {
     private final ServidorCallback servidorCallback;
     private final HashMap<UUID, Chat> chats;
     private Map<UUID, IUsuario> amigos;
-    private UUID authToken;
+    private final UUID authToken;
 
 
-    public ControladorChat(UUID authToken,IUsuario usuarioActual, ServidorCallback servidorCallback) {
+    public ControladorChat(UUID authToken, IUsuario usuarioActual, ServidorCallback servidorCallback) {
         this.servidorCallback = servidorCallback;
         this.chats = new HashMap<UUID, Chat>();
-        this.usuarioActual = usuarioActual;
         this.amigos = new HashMap<UUID, IUsuario>();
-        this.authToken=authToken;
+        this.usuarioActual = usuarioActual;
+        this.authToken = authToken;
     }
 
 
@@ -45,7 +47,7 @@ public abstract class ControladorChat {
 
                 @Override
                 protected void onAmigoNovo(IUsuario u) throws RemoteException {
-                    amigos.put(u.getUuid(),u);
+                    amigos.put(u.getUuid(), u);
                     amigoNovo(u);
                 }
 
@@ -63,19 +65,19 @@ public abstract class ControladorChat {
                 @Override
                 protected void onUsuarioConectado(IUsuario u) throws RemoteException {
                     if (u.getUuid().equals(usuarioActual.getUuid())) return;
-                    amigos.put(u.getUuid(),u);
+                    amigos.put(u.getUuid(), u);
                     usuarioConectado(u);
                 }
 
                 @Override
                 protected void onUsuarioDesconectado(IUsuario u) throws RemoteException {
-                    if(!amigos.containsKey(u.getUuid()))return;
-                    amigos.put(u.getUuid(),u);
+                    if (!amigos.containsKey(u.getUuid())) return;
+                    amigos.put(u.getUuid(), u);
                     usuarioDesconectado(u);
                 }
             };
             usuarioActual.setConectado(true);
-            amigos = servidorCallback.getAmigos(authToken,usuarioActual).stream().collect(Collectors.toMap(IUsuario::getUuid, Function.identity()));
+            amigos = servidorCallback.getAmigos(authToken, usuarioActual).stream().collect(Collectors.toMap(IUsuario::getUuid, Function.identity()));
             servidorCallback.rexistrarCliente(clienteCallback);
 
             rexistroCorrecto(amigos);
@@ -87,8 +89,8 @@ public abstract class ControladorChat {
     }
 
     public Mensaxe enviarMensaxe(IUsuario para, String mensaxe) throws RemoteException {
-        if(!para.isConectado()) return null;
-        ClienteCallback cl = servidorCallback.getCliente(authToken,para.getUuid());
+        if (!para.isConectado()) return null;
+        ClienteCallback cl = servidorCallback.getCliente(authToken, para.getUuid());
         comprobarChat(para);
         Mensaxe m = new Mensaxe(usuarioActual, para, mensaxe);
         cl.enviarMensaxe(m);
@@ -106,15 +108,15 @@ public abstract class ControladorChat {
 
     public abstract void mensaxeRecibido(IMensaxe m);
 
-    public abstract void rexistroCorrecto(Map<UUID,IUsuario> amigos);
+    public abstract void rexistroCorrecto(Map<UUID, IUsuario> amigos);
 
-    public  abstract void usuarioConectado(IUsuario usuario);
+    public abstract void usuarioConectado(IUsuario usuario);
 
-    public  abstract void usuarioDesconectado(IUsuario usuario);
+    public abstract void usuarioDesconectado(IUsuario usuario);
 
-    public  abstract void amigoNovo(IUsuario usuario);
+    public abstract void amigoNovo(IUsuario usuario);
 
-    public  abstract void amigoEliminado(IUsuario usuario);
+    public abstract void amigoEliminado(IUsuario usuario);
 
-    public  abstract void solicitudeRecibida(IRelacion relacion);
+    public abstract void solicitudeRecibida(IRelacion relacion);
 }
