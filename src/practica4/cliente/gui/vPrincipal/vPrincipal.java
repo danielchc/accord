@@ -39,7 +39,6 @@ public class vPrincipal implements Initializable {
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
     private vAmigosController amigosController;
-    private UUID authToken;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -55,10 +54,8 @@ public class vPrincipal implements Initializable {
     public vPrincipal(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
-        this.amigosController=new vAmigosController(authToken,servidorCallback,usuarioActual);
-        this.authToken=authToken;
 
-        this.controladorChat = new ControladorChat(vPrincipal.this.authToken,usuarioActual, servidorCallback) {
+        this.controladorChat = new ControladorChat(authToken,usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(IMensaxe m) {
                 cargarMensaxeInterfaz(m);
@@ -115,6 +112,7 @@ public class vPrincipal implements Initializable {
                 amigosController.actualizarRelacion();
             }
         };
+        this.amigosController=new vAmigosController(controladorChat,usuarioActual);
     }
 
     @Override

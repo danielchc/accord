@@ -7,10 +7,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import practica4.cliente.controladores.ControladorChat;
 import practica4.cliente.gui.obxectos.oSolicitud.oSolicitud;
 import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
-import practica4.interfaces.ServidorCallback;
 
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -18,10 +18,9 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class vAmigosController implements Initializable {
-    private ServidorCallback servidorCallback;
+    private ControladorChat controladorChat;
     private IUsuario usuarioActual;
-    private boolean isInitialized=false;
-    private UUID authToken;
+    private boolean isInitialized = false;
     @FXML
     private ListView lvUsuarios;
 
@@ -29,18 +28,17 @@ public class vAmigosController implements Initializable {
     private TextField tfTextoBuscar;
 
 
-    public vAmigosController(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) {
-        this.servidorCallback=servidorCallback;
-        this.usuarioActual=usuarioActual;
-        this.authToken=authToken;
+    public vAmigosController(ControladorChat controladorChat, IUsuario usuarioActual) {
+        this.controladorChat = controladorChat;
+        this.usuarioActual = usuarioActual;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        isInitialized=true;
+        isInitialized = true;
         lvUsuarios.getItems().clear();
         try {
-            lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(authToken,"",usuarioActual));
+            lvUsuarios.getItems().addAll(controladorChat.buscarUsuarios("", usuarioActual));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -57,28 +55,28 @@ public class vAmigosController implements Initializable {
                     setGraphic(new oSolicitud(item) {
                         @Override
                         public void onClickCancelar() {
-                            String usuario=item.getU2().getNomeUsuario();
-                            Alert alert=new Alert(Alert.AlertType.INFORMATION);
+                            String usuario = item.getU2().getNomeUsuario();
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             try {
-                                switch (item.getRelacion()){
+                                switch (item.getRelacion()) {
                                     case Ningunha:
                                         alert.setTitle("Solicitude");
-                                        alert.setContentText(String.format("Solicitude enviada a %s",usuario));
+                                        alert.setContentText(String.format("Solicitude enviada a %s", usuario));
                                         alert.showAndWait();
-                                        servidorCallback.enviarSolicitude(authToken,item);
+                                        controladorChat.enviarSolicitude(item);
                                         break;
                                     case Amigos:
                                         alert.setTitle("Amigo eliminado");
-                                        alert.setContentText(String.format("Acabas de eliminar a %s de amigo",usuario));
+                                        alert.setContentText(String.format("Acabas de eliminar a %s de amigo", usuario));
                                         alert.showAndWait();
-                                        servidorCallback.eliminarAmigo(authToken,item);
+                                        controladorChat.eliminarAmigo(item);
                                         break;
                                     case SolicitudeEnviada:
                                     case SolicitudePendente:
                                         alert.setTitle("Solicitude cancelada");
-                                        alert.setContentText(String.format("Acabas de cancelar a solicitude a %s",usuario));
+                                        alert.setContentText(String.format("Acabas de cancelar a solicitude a %s", usuario));
                                         alert.showAndWait();
-                                        servidorCallback.cancelarSolicitude(authToken,item);
+                                        controladorChat.cancelarSolicitude(item);
                                         break;
 
                                 }
@@ -93,8 +91,8 @@ public class vAmigosController implements Initializable {
                         @Override
                         public void onClickAceptar() {
                             try {
-                                servidorCallback.aceptarSolicitude(authToken,item);
-                            }catch (Exception e){
+                                controladorChat.aceptarSolicitude(item);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             tfTextoBuscar.clear();
@@ -105,12 +103,13 @@ public class vAmigosController implements Initializable {
             }
         });
     }
+
     @FXML
-    private void buscarUsuario(){
-        Platform.runLater(()->{
+    private void buscarUsuario() {
+        Platform.runLater(() -> {
             try {
                 lvUsuarios.getItems().clear();
-                lvUsuarios.getItems().addAll(servidorCallback.buscarUsuarios(authToken,tfTextoBuscar.getText(),usuarioActual));
+                lvUsuarios.getItems().addAll(controladorChat.buscarUsuarios(tfTextoBuscar.getText(), usuarioActual));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -119,7 +118,7 @@ public class vAmigosController implements Initializable {
     }
 
     public void actualizarRelacion() {
-        if(!isInitialized)return;
+        if (!isInitialized) return;
         buscarUsuario();
     }
 }

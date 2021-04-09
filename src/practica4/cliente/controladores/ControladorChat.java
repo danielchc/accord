@@ -7,6 +7,7 @@ import practica4.interfaces.*;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -104,6 +105,26 @@ public abstract class ControladorChat {
 
     public Chat getChat(UUID uuid) {
         return chats.get(uuid);
+    }
+
+    public void enviarSolicitude(IRelacion item) throws RemoteException {
+        servidorCallback.enviarSolicitude(authToken,item);
+    }
+
+    public void eliminarAmigo(IRelacion item) throws RemoteException {
+        servidorCallback.eliminarAmigo(authToken,item);
+    }
+
+    public void cancelarSolicitude(IRelacion item) throws RemoteException {
+        servidorCallback.cancelarSolicitude(authToken,item);
+    }
+
+    public void aceptarSolicitude(IRelacion item) throws RemoteException {
+        servidorCallback.aceptarSolicitude(authToken,item);
+    }
+
+    public List<IRelacion> buscarUsuarios(String text, IUsuario usuarioActual) throws RemoteException {
+        return servidorCallback.buscarUsuarios(authToken,text,usuarioActual);
     }
 
     public abstract void mensaxeRecibido(IMensaxe m);

@@ -36,7 +36,7 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
     @Override
     public void desRexistrarCliente(UUID authToken, UUID velloClienteUUID) throws RemoteException{
-        if(estaAutenticado(authToken))return;
+        if(!estaAutenticado(authToken))return;
         
         System.out.println("Cliente desconectado " + velloClienteUUID);
         notificarClientesDesconexion(listaClientes.get(velloClienteUUID));
