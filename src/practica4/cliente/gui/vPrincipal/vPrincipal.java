@@ -39,6 +39,7 @@ public class vPrincipal implements Initializable {
     private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
     private vAmigosController amigosController;
+    private int solicitudesPendientes;
 
     @FXML
     private TextField mensaxeEnviar;
@@ -52,6 +53,7 @@ public class vPrincipal implements Initializable {
     private TrayIcon trayIcon;
 
     public vPrincipal(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
+        this.solicitudesPendientes=0;
         this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
 
@@ -110,6 +112,10 @@ public class vPrincipal implements Initializable {
             @Override
             public void solicitudeRecibida(IRelacion relacion) {
                 amigosController.actualizarRelacion();
+                solicitudesPendientes++;
+                Platform.runLater(()->{
+                    btnAmigos.setText(String.format("Amigos (%d)",solicitudesPendientes));
+                });
             }
         };
         this.amigosController=new vAmigosController(controladorChat,usuarioActual);
@@ -204,6 +210,10 @@ public class vPrincipal implements Initializable {
 
     @FXML
     private void engadirAmigos() throws IOException {
+        this.solicitudesPendientes=0;
+        Platform.runLater(()->{
+            btnAmigos.setText("Amigos");
+        });
         Stage stage=new Stage();
         FXMLLoader fxmlLoader=new FXMLLoader();
         fxmlLoader.setController(amigosController);

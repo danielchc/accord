@@ -126,14 +126,11 @@ public class vInicioSesionController implements Initializable {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
-                System.out.println("Tocou cerrar");
                 try {
                     if (usuario != null && usuario.isConectado()) {
                         usuario.setConectado(false);
                         servidorCallback.desRexistrarCliente(authToken,usuario.getUuid());
                         System.out.println("Desconectando...");
-                    }else {
-                        System.out.println("Non se desconectou");
                     }
                 } catch (RemoteException e) {
                     System.out.println(e);
