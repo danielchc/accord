@@ -49,8 +49,6 @@ public class vInicioSesionController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         registro=false;
-        //BORRAR ESTOOOOOOOOOOOOOOO
-        tfContrasinal.setText("abc123..");
     }
 
 
