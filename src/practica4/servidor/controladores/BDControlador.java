@@ -145,7 +145,6 @@ public class BDControlador {
     }
 
     public boolean sonAmigos(IUsuario u1,IUsuario u2){
-        ArrayList<IUsuario> amigos= new ArrayList<IUsuario>();
         PreparedStatement stmUsuario = null;
         ResultSet resultValidacion;
         try {

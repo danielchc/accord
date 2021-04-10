@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.text.Font?>
 <fx:root prefHeight="51.0" prefWidth="336.0" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button fx:id="btnEngadir" layoutX="254.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClickCancelar" text="Engadir" AnchorPane.rightAnchor="14.0" />

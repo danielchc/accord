@@ -17,8 +17,6 @@ public class ClienteGUI extends Application {
     final static int porto=19000;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Thread.setDefaultUncaughtExceptionHandler(ClienteGUI::showError);
-
         ServidorCallback servidorCallback;
         try {
             servidorCallback = (ServidorCallback) Naming.lookup(String.format("rmi://%s:%d/servidor",host,porto));

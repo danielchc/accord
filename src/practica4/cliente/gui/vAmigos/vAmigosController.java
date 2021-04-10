@@ -15,7 +15,6 @@ import practica4.interfaces.IUsuario;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 public class vAmigosController implements Initializable {
     private ControladorChat controladorChat;

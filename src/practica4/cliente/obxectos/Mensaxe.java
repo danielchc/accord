@@ -3,7 +3,6 @@ package practica4.cliente.obxectos;
 import practica4.interfaces.IMensaxe;
 import practica4.interfaces.IUsuario;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

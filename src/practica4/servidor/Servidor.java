@@ -20,7 +20,7 @@ public class Servidor{
             Naming.rebind(registryURL, exportedObj);
 
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

@@ -133,7 +133,7 @@ public class vInicioSesionController implements Initializable {
                         System.out.println("Desconectando...");
                     }
                 } catch (RemoteException e) {
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
                 Platform.exit();
                 System.exit(0);

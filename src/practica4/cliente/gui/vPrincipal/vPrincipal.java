@@ -3,16 +3,14 @@ package practica4.cliente.gui.vPrincipal;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
@@ -31,13 +29,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class vPrincipal implements Initializable {
 
-    private ControladorChat controladorChat;
-    private ServidorCallback servidorCallback;
     private IUsuario usuarioActual;
+    private ControladorChat controladorChat;
     private vAmigosController amigosController;
     private int solicitudesPendientes;
 
@@ -54,9 +54,7 @@ public class vPrincipal implements Initializable {
 
     public vPrincipal(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
         this.solicitudesPendientes=0;
-        this.servidorCallback=servidorCallback;
         this.usuarioActual=usuarioActual;
-
         this.controladorChat = new ControladorChat(authToken,usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(IMensaxe m) {
@@ -220,7 +218,7 @@ public class vPrincipal implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vAmigos/vAmigos.fxml"));
         stage.setScene(new Scene(fxmlLoader.load()));
-        stage.setTitle("Amigos");
+        stage.setTitle("Amigos: " + this.usuarioActual.getNomeUsuario());
         stage.setResizable(false);
         stage.show();
     }

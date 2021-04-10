@@ -4,9 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
-import practica4.cliente.obxectos.Mensaxe;
 import practica4.interfaces.IUsuario;
 
 import java.io.IOException;

@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import practica4.interfaces.IRelacion;
-import practica4.interfaces.IUsuario;
 
 import java.io.IOException;
 

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 public class oMensaxe extends VBox {
-    private final Mensaxe mensaxe;
     @FXML
     private Label lblNomeUsuario;
     @FXML
@@ -20,8 +19,6 @@ public class oMensaxe extends VBox {
 
     public oMensaxe(Mensaxe mensaxe) {
         SimpleDateFormat dateFormat=new SimpleDateFormat("HH:mm dd/MM");
-        this.mensaxe = mensaxe;
-
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/practica4/cliente/gui/obxectos/oMensaxe/oMensaxe.fxml"));
         fxmlLoader.setRoot(this);
