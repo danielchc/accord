@@ -20,6 +20,7 @@ import practica4.cliente.gui.obxectos.oMensaxe.oMensaxe;
 import practica4.cliente.gui.obxectos.oUsuario.oUsuario;
 import practica4.cliente.gui.vAmigos.vAmigosController;
 import practica4.cliente.obxectos.Mensaxe;
+import practica4.cliente.obxectos.UsuarioLista;
 import practica4.interfaces.IMensaxe;
 import practica4.interfaces.IRelacion;
 import practica4.interfaces.IUsuario;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class vPrincipal implements Initializable {
 
@@ -53,27 +55,28 @@ public class vPrincipal implements Initializable {
     private TrayIcon trayIcon;
 
     public vPrincipal(UUID authToken, ServidorCallback servidorCallback, IUsuario usuarioActual) throws RemoteException {
-        this.solicitudesPendientes=0;
-        this.usuarioActual=usuarioActual;
-        this.controladorChat = new ControladorChat(authToken,usuarioActual, servidorCallback) {
+        this.solicitudesPendientes = 0;
+        this.usuarioActual = usuarioActual;
+        this.controladorChat = new ControladorChat(authToken, usuarioActual, servidorCallback) {
             @Override
             public void mensaxeRecibido(IMensaxe m) {
                 cargarMensaxeInterfaz(m);
+
             }
 
             @Override
             public void rexistroCorrecto(Map<UUID, IUsuario> amigos) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().addAll(amigos.values());
+                    lvListaClientes.getItems().addAll(amigos.values().stream().map(k -> new UsuarioLista(k)).collect(Collectors.toList()));
                 });
             }
 
             @Override
             public void usuarioConectado(IUsuario u) {
                 Platform.runLater(() -> {
-                    Optional<IUsuario> uv= (Optional<IUsuario>) lvListaClientes.getItems().stream().filter(k->((IUsuario)k).getUuid().equals(u.getUuid())).findFirst();
-                    if(uv.isPresent()){
-                        uv.get().setConectado(true);
+                    Optional<UsuarioLista> uv = (Optional<UsuarioLista>) lvListaClientes.getItems().stream().filter(k -> ((UsuarioLista) k).getUuid().equals(u.getUuid())).findFirst();
+                    if (uv.isPresent()) {
+                        uv.get().getUsuario().setConectado(true);
                         lvListaClientes.refresh();
                         cargarTodosMensaxesIntefaz();
                     }
@@ -83,9 +86,9 @@ public class vPrincipal implements Initializable {
             @Override
             public void usuarioDesconectado(IUsuario u) {
                 Platform.runLater(() -> {
-                    Optional<IUsuario> uv= (Optional<IUsuario>) lvListaClientes.getItems().stream().filter(k->((IUsuario)k).getUuid().equals(u.getUuid())).findFirst();
-                    if(uv.isPresent()){
-                        uv.get().setConectado(false);
+                    Optional<UsuarioLista> uv = (Optional<UsuarioLista>) lvListaClientes.getItems().stream().filter(k -> ((UsuarioLista) k).getUuid().equals(u.getUuid())).findFirst();
+                    if (uv.isPresent()) {
+                        uv.get().getUsuario().setConectado(false);
                         lvListaClientes.refresh();
                         cargarTodosMensaxesIntefaz();
                     }
@@ -95,8 +98,9 @@ public class vPrincipal implements Initializable {
             @Override
             public void amigoNovo(IUsuario u) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
-                    lvListaClientes.getItems().add(u);
+                    lvListaClientes.getItems().removeIf(k -> ((UsuarioLista) k).getUuid().equals(u.getUuid()));
+                    lvListaClientes.getItems().add(new UsuarioLista(u));
+                    cargarTodosMensaxesIntefaz();
                 });
                 amigosController.actualizarRelacion();
             }
@@ -104,7 +108,8 @@ public class vPrincipal implements Initializable {
             @Override
             public void amigoEliminado(IUsuario u) {
                 Platform.runLater(() -> {
-                    lvListaClientes.getItems().removeIf(k->((IUsuario)k).getUuid().equals(u.getUuid()));
+                    lvListaClientes.getItems().removeIf(k -> ((UsuarioLista) k).getUuid().equals(u.getUuid()));
+                    cargarTodosMensaxesIntefaz();
                 });
                 amigosController.actualizarRelacion();
             }
@@ -113,12 +118,17 @@ public class vPrincipal implements Initializable {
             public void solicitudeRecibida(IRelacion relacion) {
                 amigosController.actualizarRelacion();
                 solicitudesPendientes++;
-                Platform.runLater(()->{
-                    btnAmigos.setText(String.format("Amigos (%d)",solicitudesPendientes));
+                Platform.runLater(() -> {
+                    btnAmigos.setText(String.format("Amigos (%d)", solicitudesPendientes));
                 });
             }
         };
-        this.amigosController=new vAmigosController(controladorChat,usuarioActual);
+        this.amigosController = new vAmigosController(controladorChat, usuarioActual);
+    }
+
+
+    private IUsuario getUsuarioSeleccionado() {
+        return ((UsuarioLista) lvListaClientes.getSelectionModel().getSelectedItems().get(0)).getUsuario();
     }
 
     @Override
@@ -143,9 +153,9 @@ public class vPrincipal implements Initializable {
                 }
             }
         });
-        lvListaClientes.setCellFactory(param -> new ListCell<IUsuario>() {
+        lvListaClientes.setCellFactory(param -> new ListCell<UsuarioLista>() {
             @Override
-            protected void updateItem(IUsuario item, boolean empty) {
+            protected void updateItem(UsuarioLista item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(null);
                 if (empty || item == null) {
@@ -158,17 +168,23 @@ public class vPrincipal implements Initializable {
     }
 
     private void cargarMensaxeInterfaz(IMensaxe m) {
-        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
-
-        IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-        if (m.getDe().getUuid().equals(u.getUuid()) || m.getPara().getUuid().equals(u.getUuid())) {
+        if ((lvListaClientes.getSelectionModel().getSelectedItems().size() == 1) &&(m.getDe().getUuid().equals(getUsuarioSeleccionado().getUuid()) || m.getPara().getUuid().equals(getUsuarioSeleccionado().getUuid()))) {
             Platform.runLater(() -> {
                 lvMensaxes.getItems().add(m);
+            });
+        }else{
+            Platform.runLater(()->{
+                Optional<UsuarioLista> uv = (Optional<UsuarioLista>) lvListaClientes.getItems().stream().filter(k -> ((UsuarioLista) k).getUuid().equals(m.getDe().getUuid())).findFirst();
+                if (uv.isPresent()) {
+                    uv.get().aumentarPendentes();
+                    lvListaClientes.refresh();
+                }
             });
         }
     }
 
     private void cargarTodosMensaxesIntefaz() {
+        if (lvListaClientes.getSelectionModel().getSelectedItems().size() == 0) lvMensaxes.getItems().clear();
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         Platform.runLater(() -> {
             mensaxeEnviar.setDisable(false);
@@ -176,10 +192,16 @@ public class vPrincipal implements Initializable {
 
             lvMensaxes.getItems().clear();
 
-            IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
-            if (controladorChat.existeChat(u.getUuid()))
+            IUsuario u = getUsuarioSeleccionado();
+            Optional<UsuarioLista> uv = (Optional<UsuarioLista>) lvListaClientes.getItems().stream().filter(k -> ((UsuarioLista) k).getUuid().equals(u.getUuid())).findFirst();
+            if (uv.isPresent()) {
+                uv.get().reiniciarPendentes();
+                lvListaClientes.refresh();
+            }
+            if (controladorChat.existeChat(u.getUuid())){
                 lvMensaxes.getItems().addAll(controladorChat.getChat(u.getUuid()).getMensaxes());
-            if(!u.isConectado()){
+            }
+            if (!u.isConectado()) {
                 lvMensaxes.setPlaceholder(new Label("O usuario non está conectado"));
                 mensaxeEnviar.setDisable(true);
             }
@@ -191,10 +213,10 @@ public class vPrincipal implements Initializable {
     private void enviarMensaxeClick() {
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         if (mensaxeEnviar.getText().isEmpty()) return;
-        String mensaxe=mensaxeEnviar.getText();
+        String mensaxe = mensaxeEnviar.getText();
         mensaxeEnviar.clear();
-        IUsuario usuarioPara = ((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0));
-        if(!usuarioPara.isConectado()) return;
+        IUsuario usuarioPara = getUsuarioSeleccionado();
+        if (!usuarioPara.isConectado()) return;
 
         try {
             Mensaxe m = controladorChat.enviarMensaxe(usuarioPara, mensaxe);
@@ -206,12 +228,12 @@ public class vPrincipal implements Initializable {
 
     @FXML
     private void engadirAmigos() throws IOException {
-        this.solicitudesPendientes=0;
-        Platform.runLater(()->{
+        this.solicitudesPendientes = 0;
+        Platform.runLater(() -> {
             btnAmigos.setText("Amigos");
         });
-        Stage stage=new Stage();
-        FXMLLoader fxmlLoader=new FXMLLoader();
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(amigosController);
         stage.initModality(Modality.APPLICATION_MODAL);
         fxmlLoader.setLocation(getClass().getResource("/practica4/cliente/gui/vAmigos/vAmigos.fxml"));
@@ -220,9 +242,10 @@ public class vPrincipal implements Initializable {
         stage.setResizable(false);
         stage.show();
     }
+
     @FXML
-    private void onKeyEnviarMensaxe(KeyEvent e){
-        if(e.getCode().equals(KeyCode.ENTER))
+    private void onKeyEnviarMensaxe(KeyEvent e) {
+        if (e.getCode().equals(KeyCode.ENTER))
             enviarMensaxeClick();
     }
 }
