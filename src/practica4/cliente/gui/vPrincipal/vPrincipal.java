@@ -75,6 +75,7 @@ public class vPrincipal implements Initializable {
                     if(uv.isPresent()){
                         uv.get().setConectado(true);
                         lvListaClientes.refresh();
+                        cargarTodosMensaxesIntefaz();
                     }
                 });
             }
@@ -86,6 +87,7 @@ public class vPrincipal implements Initializable {
                     if(uv.isPresent()){
                         uv.get().setConectado(false);
                         lvListaClientes.refresh();
+                        cargarTodosMensaxesIntefaz();
                     }
                 });
             }
@@ -121,6 +123,7 @@ public class vPrincipal implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        lvMensaxes.setPlaceholder(new Label("Benvido a Accord, comeza unha conversa"));
         controladorChat.rexistrarCliente();
         lvListaClientes.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -166,16 +169,13 @@ public class vPrincipal implements Initializable {
     }
 
     private void cargarTodosMensaxesIntefaz() {
-
-
+        if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         Platform.runLater(() -> {
             mensaxeEnviar.setDisable(false);
             lvMensaxes.setPlaceholder(new Label("Non tes mensaxes con este usuario"));
 
-            lvMensaxes.getItems().removeAll(lvMensaxes.getItems());
+            lvMensaxes.getItems().clear();
 
-
-            if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
             IUsuario u = (IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0);
             if (controladorChat.existeChat(u.getUuid()))
                 lvMensaxes.getItems().addAll(controladorChat.getChat(u.getUuid()).getMensaxes());
@@ -191,19 +191,17 @@ public class vPrincipal implements Initializable {
     private void enviarMensaxeClick() {
         if (lvListaClientes.getSelectionModel().getSelectedItems().size() != 1) return;
         if (mensaxeEnviar.getText().isEmpty()) return;
-
+        String mensaxe=mensaxeEnviar.getText();
+        mensaxeEnviar.clear();
         IUsuario usuarioPara = ((IUsuario) lvListaClientes.getSelectionModel().getSelectedItems().get(0));
+        if(!usuarioPara.isConectado()) return;
 
-        Mensaxe m = null;
         try {
-            m = controladorChat.enviarMensaxe(usuarioPara, mensaxeEnviar.getText());
+            Mensaxe m = controladorChat.enviarMensaxe(usuarioPara, mensaxe);
+            cargarMensaxeInterfaz(m);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        mensaxeEnviar.clear();
-        if(m==null)return;
-
-        cargarMensaxeInterfaz(m);
     }
 
     @FXML
