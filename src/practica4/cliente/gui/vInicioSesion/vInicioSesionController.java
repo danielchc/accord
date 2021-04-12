@@ -96,7 +96,7 @@ public class vInicioSesionController implements Initializable {
             return;
         }
 
-        iniciarSesion(servidorCallback.getUsuario(u));
+        iniciarSesion(servidorCallback.getUsuario(authToken,u));
         ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
     }
 

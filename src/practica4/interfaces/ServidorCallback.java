@@ -10,15 +10,15 @@ public interface ServidorCallback extends Remote {
 
     boolean tenIniciadoSesion(String nomeUsuario) throws RemoteException;
 
-    void rexistrarCliente(ClienteCallback obj) throws RemoteException;
+    void rexistrarCliente(UUID authToken,ClienteCallback obj) throws RemoteException;
 
     void desRexistrarCliente(UUID authToken, UUID uuid) throws RemoteException;
 
     UUID comprobarUsuario(String nomeUsuario, String contrasinal) throws RemoteException;
 
-    IUsuario getUsuario(String nomeUsuario) throws RemoteException;
-
     boolean comprobarUsuarioExiste(String u) throws RemoteException;
+
+    IUsuario getUsuario(UUID authToken,String nomeUsuario) throws RemoteException;
 
     IUsuario rexistrarUsuario(String u, String p) throws RemoteException;
 

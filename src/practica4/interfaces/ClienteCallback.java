@@ -20,8 +20,6 @@ public interface ClienteCallback extends Remote {
 
     IUsuario getUsuario() throws RemoteException;
 
-    void setUsuario(IUsuario usuario) throws RemoteException;
-
     UUID getUuid() throws RemoteException;
 
     void enviarSolicitude(IRelacion relacion) throws RemoteException;

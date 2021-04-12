@@ -28,7 +28,8 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
 
 
     @Override
-    public void rexistrarCliente(ClienteCallback novoCliente) throws RemoteException{
+    public void rexistrarCliente(UUID authToken,ClienteCallback novoCliente) throws RemoteException{
+        if(!estaAutenticado(authToken))return;
         System.out.println("Conectado novo cliente " + novoCliente.getUuid());
         listaClientes.put(novoCliente.getUsuario().getUuid(),novoCliente);
         notificarClientesConexion(novoCliente);
@@ -55,7 +56,9 @@ public class ServidorCallbackImpl extends UnicastRemoteObject implements Servido
     }
 
     @Override
-    public IUsuario getUsuario(String nomeUsuario) throws RemoteException {
+    public IUsuario getUsuario(UUID authToken,String nomeUsuario) throws RemoteException {
+        if(!estaAutenticado(authToken))
+            return null;
         return bdControlador.getUsuario(nomeUsuario);
     }
 

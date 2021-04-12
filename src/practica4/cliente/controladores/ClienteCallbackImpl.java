@@ -50,11 +50,6 @@ public abstract class ClienteCallbackImpl extends UnicastRemoteObject implements
    }
 
    @Override
-   public void setUsuario(IUsuario usuario) throws RemoteException{
-      this.usuario=usuario;
-   }
-
-   @Override
    public UUID getUuid() throws RemoteException {
       return usuario.getUuid();
    }
